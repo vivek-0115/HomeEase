@@ -1,0 +1,115 @@
+{% extends "/Admin/home.html" %}
+
+{% block nav %}
+<a href="{{url_for('admin_home',id=admin.admin.id)}}" class="link">Home</a>
+<a href="{{url_for('services',id=admin.admin.id)}}" class="link">Services</a>
+<a href="{{url_for('manage_users',id=admin.admin.id)}}" id="current-link">Users</a>
+<a href="{{url_for('admin_profile',id=admin.admin.id)}}" class="link">Profile</a>
+<a href="{{url_for('logout')}}" class="link">Logout</a>
+{% endblock %}
+
+{% block main_content %}
+<div class="row" id="unverified">
+    <h2>To be Verified</h2>
+    <div class="col-12 main-box">
+        {% if un_verified | length != 0 %}
+        {% for prof in un_verified %}
+        <div class="row box">
+            <div class="col-sm-4">
+                <h3 style="color: #2cc7dc;">{{prof.fname}} {{prof.lname}}</h3>
+                <p style="color: #f0eee4;">
+                    <span style="color: #ffe4e1;text-transform: capitalize; font-weight: 500;font-size: 20px;">{{prof.service_type}}</span><br>
+                    <span>Email:</span><br>
+                    <span>{{prof.email}}</span>
+                </p>
+            </div>
+            <div class="col-sm-4">
+                <h4 style="color: #72A0C1;">Address</h4>
+                <p style="color: #dee2e6;">
+                    {{prof.street}}, {{prof.city}}, <br> {{prof.state}}, {{prof.zipcode}} <br>
+                    <span style="color: #adb5bd;">Phone: {{prof.phone}}</span>
+                </p>
+            </div>
+            <div class="col-sm-4">
+                <h4 style="color: #72A0C1;">Actions</h4>
+                <a href="{{url_for('view_resume',id=admin.admin.id,prof_id=prof.id)}}">View Resume</a> <br><br>
+                <a href="{{url_for('verify_professional',id=admin.admin.id,prof_id=prof.id)}}" style="background-color: #45e24a;">Verify</a>
+                <a href="{{url_for('reject_professional',id=admin.admin.id,prof_id=prof.id)}}" style="background-color: #f44336;">Reject</a>
+            </div>
+        </div>
+        <hr>
+        {% endfor %}
+        {% else %}
+        <h4>All are Verified</h4>
+        <hr>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row" id="activeTable">
+    <h2>Active List</h2>
+    {% if actives | length != 0 %}
+    <table class="table" style="color: #fff;">
+        <thead>
+          <tr>
+            <th>SNo.</th>
+            <th>UserID</th>
+            <th>Name</th>
+            <th>UserType</th>
+            <th>Email</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for active in actives %}
+          <tr>
+            <th>{{loop.index}}</th>
+            <td>{{active.id}}</td>
+            <td>{{active.fname}} {{active.lname}}</td>
+            <td>{{active.user_type}}</td>
+            <td>{{active.email}}</td>
+            <td><a href="{{url_for('block_user',id=admin.admin.id,user_id=active.id)}}" style="background-color: #f44336;">Block</a> 
+                <a href="{{url_for('view_user',id=admin.admin.id,user_id=active.id)}}" style="background-color: #1da1f2;">View</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <h5>No Active Users.</h5>
+      {% endif %}
+</div>
+<hr>
+<div class="row" id="activeTable">
+  <h2>Blocked Users</h2>
+  {% if blocks | length != 0 %}
+  <table class="table" style="color: #fff;">
+      <thead>
+        <tr>
+          <th>SNo.</th>
+          <th>UserID</th>
+          <th>Name</th>
+          <th>UserType</th>
+          <th>Email</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for block in blocks %}
+        <tr>
+          <th>{{loop.index}}</th>
+          <td>{{block.id}}</td>
+          <td>{{block.fname}} {{block.lname}}</td>
+          <td>{{block.user_type}}</td>
+          <td>{{block.email}}</td>
+          <td><a href="{{url_for('unblock_user',id=admin.admin.id,user_id=block.id)}}" style="background-color: #45e24a;">Unblock</a> 
+              <a href="{{url_for('view_user',id=admin.admin.id,user_id=block.id)}}" style="background-color: #1da1f2;" >View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <h5>No Blocked Users.</h5>
+    {% endif %}
+</div>
+<hr>
+{% endblock %}

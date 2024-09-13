@@ -1,0 +1,140 @@
+body{
+    background-color: #041E42;
+    color: #FFF;
+    font-family: suse;
+}
+.container{
+    margin-top: 10px;
+}
+#logo{
+    display: flex;
+    align-items: center;
+}
+#link{
+    
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    border-radius: 25px;
+
+    & a{
+        text-decoration: none;
+        letter-spacing: 1px;
+        position: relative;
+        color: #FFF;
+        font-size: 19px;
+        font-weight: 400;
+        padding: 6px;
+    }
+
+    & .link{
+        &::after{
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            left: 0;
+            bottom:6px;
+            background-color: #f20078;
+            transition: all 0.4s ease;
+        }
+    
+        &:hover::after{
+            width: 100%;
+        }
+    }
+
+    #current-link{
+        &::after{
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            left: 0;
+            bottom:6px;
+            background-color: #f20078;
+        }
+    }
+}
+#profile{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    & #profile-box{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        & #profile-img{
+            border-radius: 50%;
+            & img{
+                border-radius: 50%;
+            }
+        }
+
+        & #profile-text{
+            margin-left: 10px;
+            height: 50px;
+        }
+    }
+}
+
+#not_verified{
+    margin-top: 50px;
+    padding: 20px;
+    background-color: #022352;
+    border-radius: 10px;
+    box-shadow: 1px 3px 15px rgba(0, 0, 0,0.3);
+
+    & h1{
+        color: #1da1f2;
+    }
+
+    & h3{
+        color: #E2DFD2;
+    }
+    & p{
+        color: #737a9e;
+    }
+
+    & #app_name{
+        color: #f20078;
+        text-decoration: underline;
+        font-size: 32px;
+    }
+}
+
+@media (max-width: 576px) { /* For small devices like phones */
+    #nav {
+        display: flex;
+        align-items: center;
+    }
+
+    #logo {
+        order: 1;
+        width: 35%;
+    }
+
+    #profile {
+        order: 2;
+        width: 65%;
+
+        & #profile-box{
+            & #profile-img{
+                margin-left: 0px;
+            }
+        }
+
+        & #profile-text{
+            & span{
+                font-size: 14px;
+            }
+        }
+    }
+
+    #link {
+        order: 3;
+        margin-top: 15px;
+    }
+}

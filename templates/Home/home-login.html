@@ -1,0 +1,57 @@
+{% extends '/home/home.html'%}
+
+{% block nav %}
+    <a href="{{url_for('home')}}" id="link">Home</a>
+    <a href="{{url_for('login')}}" id="current-link">Login</a>
+    <a href="{{url_for('join_cust')}}" id="link">Join</a>
+    <a href="{{url_for('about')}}" id="link">AboutUs</a>
+{% endblock %}
+
+{% block detail %}
+<div class="col-sm-6" id="intro">
+    <div id="text">
+        <h5 style="color: #6CB4EE;">Welcome to</h5>
+        <h2 style="color: #FFFFF0;">
+            <span id="app-name">HomeEase</span><br> Manage your account and get started.
+        </h2>
+        <p style="color: #FFDEAD;">Whether you're here to book services or offer your expertise, sign in to access your dashboard.<br>
+        </p>
+        <div id="intro-btn">
+            <div id="a-btn">
+                <a href="{{url_for('about')}}" id="btn1">Explore More</a>
+                <a href="{{url_for('join_prof')}}" id="btn2">Join now</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block image %}
+    <div class="col-sm-6" id="login">
+        <form action="{{url_for('login')}}" method="post" id="login-box">
+            <div id="heading"><h1>Log in<span style="color: #f20078;">.</span></h1></div>
+            <div class="flash-box">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                    <h3 class="{{ category }}">{{message}}</h3>
+                    {% endfor %}
+                {% endif %}
+                {% endwith %}
+            </div>
+            <div class="input">
+                <input type="email" name="username"  class="input-field" placeholder="Username (Email)" required>
+                <img src="/static/user.png" alt="" width="22">
+            </div>
+            <div class="input">
+                <input type="password" name="password" maxlength="8" minlength="4" class="input-field" placeholder="Password (4-8)">
+                <img src="/static/pass2.png" alt="" width="22">  
+            </div>
+            <div id="input-submit">
+                <input type="submit" value="Login">
+                <p>New User ? I'm <br> <a href="{{url_for('join_cust')}}">Customer</a> or <a href="{{url_for('join_prof')}}">Professional</a></p>
+                
+            </div>
+        </form>
+    </div>
+{% endblock %}

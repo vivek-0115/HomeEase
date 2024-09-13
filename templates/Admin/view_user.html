@@ -1,0 +1,74 @@
+{% extends '/base.html' %}
+
+{% block nav %}
+<a href="{{url_for('admin_home',id=admin.admin.id)}}" class="link">Home</a>
+<a href="{{url_for('services',id=admin.admin.id)}}" class="link">Services</a>
+<a href="{{url_for('manage_users',id=admin.admin.id)}}" id="current-link">Users</a>
+<a href="{{url_for('admin_profile',id=admin.admin.id)}}" class="link">Profile</a>
+<a href="{{url_for('logout')}}" class="link">Logout</a>
+{% endblock %}
+
+{% block profile_img %}
+{% if admin.picture %}
+        <img src="data:{{ admin.mimetype }};base64,{{ admin.picture }}" alt="Profile Picture" width="50" height="50">
+    {% else %}
+        <img src="/static/user.png" alt="" width="50" height="50">
+    {% endif %}
+{% endblock %}
+
+{% block name_mail %}
+<p>{{admin.adminDetail.fname}} {{admin.adminDetail.lname}}<br>{{admin.admin.email}}</span></p>
+{% endblock %}
+
+{% block image %}
+    {% if user.picture %}
+        <img src="data:{{ user.mimetype }};base64,{{ user.picture }}" alt="Profile Picture" width="180" height="180">
+    {% else %}
+        <img src="/static/user.png" alt="" width="150" height="150">
+    {% endif %}
+{% endblock %}
+
+{% block add_image %}
+{% endblock %}
+
+{% block change_password %}
+<a href="{{url_for('manage_users',id=admin.admin.id)}}">Back</a>
+{% endblock %}
+
+{% block name_prof %}
+<h1>{{user.userData.fname}} {{user.userData.lname}}</h1>
+<h4>I'm {{user.user.role.name}} {{user.userData.service_type}}</h4>
+{% endblock %}
+
+{% block rating %}
+{% endblock %}
+
+{% block phone %}
+<div class="col-3" class="title" style="color: #2774AE;">Phone</div>
+<div class="col-9" style="color: #1da1f2;">{{user.userData.phone_no}}</div>
+{% endblock %}
+
+{% block address %}
+<div class="col-3" class="title" style="color: #2774AE;">Address</div>
+<div class="col-9" style="color: #72A0C1;">
+    {{user.adrs.street}}, {{user.adrs.city}}, <br>
+    {{user.adrs.state}}, {{user.adrs.zipcode}}
+</div>
+{% endblock %}
+
+{% block mail %}
+<div class="col-3" class="title" style="color: #2774AE;">Email</div>
+<div class="col-9" style="color: #1da1f2;">{{user.user.email}}</div>
+{% endblock %}
+
+{% block join_date %}
+<div class="col-3" class="title" style="color: #2774AE;">Created on</div>
+<div class="col-9" style="color: #1da1f2;">12/05/2022</div>
+{% endblock %}
+
+{% block experience %}
+
+{% endblock %}
+
+{% block update_information %}
+{% endblock %}

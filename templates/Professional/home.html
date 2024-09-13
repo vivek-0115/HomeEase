@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/professional.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row" id="nav">
+            <div class="col-sm-2" id="logo">
+                <img src="/static/HomeEase4.png" alt="" width="120">
+            </div>
+            <div class="col-sm-6" id="link">
+                {% block nav %}
+                    {% if professional.is_verified %}
+                        <a href="{{url_for('professional_home',id=professional.id)}}" id="current-link">Home</a>
+                        <a href="" class="link">Updates</a>
+                        <a href="{{url_for('professional_profile',id=professional.id)}}" class="link">Profile</a>
+                        <a href="" class="link">Logout</a>
+                    {% else %}
+                        <a href="{{url_for('professional_home',id=professional.id)}}" id="current-link">Home</a>
+                        <a href="" class="link">Logout</a>
+                    {% endif %}
+                {% endblock %}
+            </div>
+            <div class="col-sm-4" id="profile">
+                <div id="profile-box">
+                    <div id="profile-img">
+                        {% block profile_img %}
+                        {% if professional.picture %}
+                        <img src="data:{{ professional.mimetype }};base64,{{professional.picture }}" alt="Profile Picture" width="50" height="50">
+                        {% else %}
+                        <img src="/static/user.png" alt="" width="50" height="50">
+                        {% endif %}
+                        {% endblock %}
+                    </div>
+                    <div id="profile-text">
+                        {% block name_mail %}
+                        <p>{{professional['fname']}} {{professional['lname']}}<br>{{professional['email']}}</span></p>
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if not professional.is_verified %}
+        <div class="row" id="not_verified">
+            <h1>Verification Pending !</h1>
+            <h3>Thank you for registering with <span id="app_name" >HomeEase.</span></h3>
+            <p>Your account is currently under review by Admin. 
+                We verify all professionals to ensure quality and trust on our platform.</p>
+        </div>
+        {% else %}
+        <div class="row">
+            
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

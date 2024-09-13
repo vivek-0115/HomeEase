@@ -1,0 +1,78 @@
+{% extends '/home/home.html'%}
+
+{% block nav %}
+    <a href="{{url_for('home')}}" id="link">Home</a>
+    <a href="{{url_for('login')}}" id="link">Login</a>
+    <a href="{{url_for('join_cust')}}" id="link">Join</a>
+    <a href="{{url_for('about')}}" id="current-link">AboutUs</a>
+{% endblock %}
+
+{% block content %}
+    <div class="row" id="about-content">
+        <div class="col-sm-8">
+            <div id="about-text">
+                <p id="about">About Us</p>
+                <h1>Welcome to <span id="app">HomeEase</span><span class="stp">,</span></h1>
+                <h1>your ultimate home services companion<span class="stp">.</span></h1>
+                <h2 style="color: #00308F;">We believe that managing your home should be easy<span class="stp">,</span> efficient, and stress-free<span class="stp">.</span></h2>
+                <p id="sub-des">We believe that managing your home should be easy, efficient, and stress-free. 
+                    Whether you need a quick repair, routine maintenance, or specialized services, 
+                    we’re here to help connect you with the right professionals for the job.</p>
+            </div>
+        </div>
+        <div class="col-sm-4" id="about-image">
+            <img src="/static/hotel.gif" alt="" width="400">
+        </div>
+    </div>
+
+    <div class="row" id="cards">
+        <div id="card1" class="about-card">
+            <h1>Our Mission</h1>
+            <p>At <span id="app">HomeEase</span>, our mission is simple: to make home management easier for everyone. 
+                We understand how time-consuming and stressful household tasks can be, which is why 
+                we’ve created an all-in-one platform that takes care of everything—from minor fixes 
+                to major renovations. Our goal is to provide you with reliable, high-quality services 
+                that you can trust, all at the touch of a button.</p>
+        </div>
+        <div id="card2" class="about-card">
+            <h1>What We Offer</h1>
+            <ul>
+                <li><span>Home Repairs :</span> Electrical, plumbing, appliance repair, and more.</li>
+                <li><span>Cleaning Services :</span> Regular cleaning, deep cleaning, and specialized cleaning services.</li>
+                <li><span>Maintenance :</span> Lawn care, HVAC services, pest control, and beyond.</li>
+                <li><span>Specialized Services :</span> Handyman work, painting, remodeling, and other customized tasks.</li>
+            </ul>
+        </div>
+        <div id="card3" class="about-card">
+            <h1>Our Values</h1>
+            <ul>
+                <li><span>Quality :</span> We ensure every job is done right by connecting you with experienced, vetted professionals.</li>
+                <li><span>Convenience :</span> Life is busy enough—our app makes it easier to find, book, and manage services without hassle.</li>
+                <li><span>Trust :</span> Your home is your sanctuary, and we take that seriously. All our service providers undergo thorough background checks to ensure they meet our high standards.</li>
+                <li><span>Transparency :</span> With clear pricing and no hidden fees, you always know what to expect when you use <span id="app">HomeEase</span>.</li>
+            </ul>
+            
+        </div>
+        <div id="card4" class="about-card">
+            <h1>How We Started</h1>
+            <p><span id="app">HomeEase</span> was founded with a vision to simplify home 
+                management for busy individuals and families. What 
+                started as a small idea has now grown into a 
+                platform that serves countless households, offering 
+                trusted and reliable services across various needs. 
+                We believe that by making household tasks easier, 
+                we’re helping you create more time for what really 
+                matters in your life.</p>
+        </div>
+    </div>
+    <div class="row" id="footer">
+        <h1>About Developer</h1>
+        <div>
+            <img src="/static/vivek.gif" alt="">
+            <h2>Vivek Kumar</h2>
+            <p>contact : <br>23f2004724ds.study.iitm.ac.in</p>
+        </div>
+    </div>
+{% endblock %}
+
+

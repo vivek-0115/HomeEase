@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/admin.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row" id="nav">
+            <div class="col-sm-2" id="logo">
+                <img src="/static/HomeEase4.png" alt="" width="120">
+            </div>
+            <div class="col-sm-6" id="link">
+                {% block nav %}
+                <a href="{{url_for('admin_home',id=admin.admin.id)}}" id="current-link">Home</a>
+                <a href="{{url_for('services',id=admin.admin.id)}}" class="link">Services</a>
+                <a href="{{url_for('manage_users',id=admin.admin.id)}}" class="link">Users</a>
+                <a href="{{url_for('admin_profile',id=admin.admin.id)}}" class="link">Profile</a>
+                <a href="{{url_for('logout')}}" class="link">Logout</a>
+                {% endblock %}
+            </div>
+            <div class="col-sm-4" id="profile">
+                <div id="profile-box">
+                    <div id="profile-img">
+                        {% block profile_img %}
+                        {% if admin.picture %}
+                        <img src="data:{{ admin.mimetype }};base64,{{ admin.picture }}" alt="Profile Picture" width="50" height="50">
+                        {% else %}
+                        <img src="/static/user.png" alt="" width="50" height="50">
+                        {% endif %}
+                        {% endblock %}
+                    </div>
+                    <div id="profile-text">
+                        {% block name_mail %}
+                        <p>{{admin.admin.fname}} {{admin.admin.lname}}<br>{{admin.admin.email}}</span></p>
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% block main_content %}
+
+        {% endblock %}
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!--Customer Home Page-->
+{% extends '/base.html' %}
+
+{% block nav %}
+<a href="{{url_for('professional_home',id=data.id)}}" class="link">Home</a>
+<a href="" class="link">Wallet</a>
+<a href="" id="current-link">Profile</a>
+<a href="{{url_for('logout')}}" class="link">Logout</a>
+{% endblock %}
+
+{% block profile_img %}
+{% if data.picture %}
+        <img src="data:{{ data.mimetype }};base64,{{ data.picture }}" alt="Profile Picture" width="50" height="50">
+    {% else %}
+        <img src="/static/user.png" alt="" width="50" height="50">
+    {% endif %}
+{% endblock %}
+
+{% block name_mail %}
+<p>{{data['fname']}} {{data['lname']}}<br>{{data['email']}}</span></p>
+{% endblock %}
+
+{% block image %}
+    {% if data.picture %}
+        <img src="data:{{ data.mimetype }};base64,{{ data.picture }}" alt="Profile Picture" width="180" height="180">
+    {% else %}
+        <img src="/static/user.png" alt="" width="150" height="150">
+    {% endif %}
+{% endblock %}
+
+{% block add_image %}
+<form action="{{url_for('professional_change_profile',id=data['id'])}}" method="post" enctype="multipart/form-data">
+    <h6>Change Your Profile Picture</h6>
+    <div><input type="file" name="photo" accept="image/png" required style="width: 210px;"></div>
+    <div><input type="submit" value="Update Picture"></div>
+</form>
+{% endblock %}
+
+{% block change_password %}
+<form action="{{url_for('professional_change_password',id=data.id)}}" method="post">
+    <h6>Change Your Password</h6>
+    <div class="flash-box">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <h6 class="{{ category }}">{{ message }}</h6>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+    <input type="password" placeholder="Password (4-8)" name="old_password" maxlength="8" minlength="4" required>
+    <input type="password" placeholder="Password (4-8)" name="new_password" maxlength="8" minlength="4" required>
+    <div> <input type="submit" value="change"></div>
+</form>
+{% endblock %}
+
+{% block name_prof %}
+<h1>{{data.fname}} {{data.lname}}</h1>
+<h4>I'm Customer</h4>
+{% endblock %}
+
+{% block rating %}
+<div class="col-6" style="color: #1da1f2;">Rating</div>
+<div class="col-6" style="color: #1da1f2;">Wallet</div>
+{% endblock %}
+
+{% block phone %}
+<div class="col-3" class="title" style="color: #2774AE;">Phone</div>
+<div class="col-9" style="color: #1da1f2;">{{data.phone}}</div>
+{% endblock %}
+
+{% block address %}
+<div class="col-3" class="title" style="color: #2774AE;">Address</div>
+<div class="col-9" style="color: #72A0C1;">
+    {{data.street}}, {{data.city}}, <br>
+    {{data.state}}, {{data.zipcode}}
+</div>
+{% endblock %}
+
+{% block mail %}
+<div class="col-3" class="title" style="color: #2774AE;">Email</div>
+<div class="col-9" style="color: #1da1f2;">{{data.email}}</div>
+{% endblock %}
+
+{% block join_date %}
+<div class="col-3" class="title" style="color: #2774AE;">Joined on</div>
+<div class="col-9" style="color: #1da1f2;">12/05/2022</div>
+{% endblock %}
+
+{% block experience %}
+<div class="col-3" class="title" style="color: #2774AE;">Experience</div>
+<div class="col-9" style="color: #1da1f2;">{{data.experience}} Years.</div>
+{% endblock %}
+
+{% block update_information %}
+<form action="{{url_for('professional_update_information',id=data.id)}}" method="post">
+    <h2>Update Information</h2>
+    <div class="flash-box">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <h6 class="{{ category }}">{{ message }}</h6>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+    <div class="group">
+        <div class="subgroup">
+            <label for="">First Name</label>
+            <input type="text" name="fname" value="{{data.fname}}">
+        </div>
+        <div class="subgroup">
+            <label for="">Last Name</label>
+            <input type="text" name="lname" value="{{data.lname}}">
+        </div>
+    </div>
+    <hr>
+    <div class="group">
+        <div class="subgroup">
+            <label for="">state</label>
+            <input type="text" name="state" value="{{data.state}}">
+        </div>
+        <div class="subgroup">
+            <label for="">city</label>
+            <input type="text" name="city" value="{{data.city}}">
+        </div>
+
+    </div>
+    <hr>
+    <div class="group">
+        <div class="subgroup">
+            <label for="">Street</label>
+            <input type="text" name="street" value="{{data.street}}" style="width: 160%;">
+        </div>
+        
+    </div>
+    <hr>
+    <div class="group">
+        <div class="subgroup">
+            <label for="">Phone</label>
+            <input type="tel" name="phone" value="{{data.phone}}">
+        </div>
+        <div class="subgroup">
+            <label for="">Zipcode</label>
+            <input type="number" maxlength="7" name="zipcode" value="{{data.zipcode}}">
+        </div>
+    </div>
+    <hr>
+    <input type="submit" value="Update">
+</form>
+{% endblock %}
