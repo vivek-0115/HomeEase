@@ -1,10 +1,10 @@
 {% extends '/base.html' %}
 
 {% block nav %}
-<a href="{{url_for('admin_home',id=admin.id)}}" class="link">Home</a>
-<a href="{{url_for('services',id=admin.id)}}" class="link">Services</a>
-<a href="{{url_for('manage_users',id=admin.id)}}" class="link">Users</a>
-<a href="{{url_for('admin_profile',id=admin.id)}}" id="current-link">Profile</a>
+<a href="{{url_for('admin_home',id=admin.admin.id)}}" class="link">Home</a>
+<a href="{{url_for('services',id=admin.admin.id)}}" class="link">Services</a>
+<a href="{{url_for('manage_users',id=admin.admin.id)}}" class="link">Users</a>
+<a href="{{url_for('admin_profile',id=admin.admin.id)}}" id="current-link">Profile</a>
 <a href="{{url_for('logout')}}" class="link">Logout</a>
 {% endblock %}
 
@@ -29,7 +29,7 @@
 {% endblock %}
 
 {% block add_image %}
-<form action="{{url_for('admin_change_profile',id=admin.id)}}" method="post" enctype="multipart/form-data">
+<form action="{{url_for('admin_change_profile',id=admin.admin.id)}}" method="post" enctype="multipart/form-data">
     <h6>Change Your Profile Picture</h6>
     <div><input type="file" name="photo" accept="image/png" required style="width: 210px;"></div>
     <div><input type="submit" value="Update Picture"></div>
@@ -37,7 +37,7 @@
 {% endblock %}
 
 {% block change_password %}
-<form action="{{url_for('admin_change_password',id=admin.id)}}" method="post">
+<form action="{{url_for('admin_change_password',id=admin.admin.id)}}" method="post">
     <h6>Change Your Password</h6>
     <div class="flash-box">
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -70,7 +70,7 @@
 
 {% block mail %}
 <div class="col-3" class="title" style="color: #2774AE;">Email</div>
-<div class="col-9" style="color: #1da1f2;">{{admin.email}}</div>
+<div class="col-9" style="color: #1da1f2;">{{admin.admin.email}}</div>
 {% endblock %}
 
 {% block join_date %}
@@ -83,7 +83,7 @@
 {% endblock %}
 
 {% block update_information %}
-<form action="{{url_for('admin_update_information',id=admin.id)}}" method="post">
+<form action="{{url_for('admin_update_information',id=admin.admin.id)}}" method="post">
     <h2>Update Information</h2>
     <div class="flash-box">
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -97,11 +97,11 @@
     <div class="group">
         <div class="subgroup">
             <label for="">First Name</label>
-            <input type="text" name="fname" value="{{admin.fname}}">
+            <input type="text" name="fname" value="{{admin.admin.fname}}">
         </div>
         <div class="subgroup">
             <label for="">Last Name</label>
-            <input type="text" name="lname" value="{{admin.lname}}">
+            <input type="text" name="lname" value="{{admin.admin.lname}}">
         </div>
     </div>
     <hr>
