@@ -17,7 +17,7 @@
 {% endblock %}
 
 {% block name_mail %}
-<p>{{admin['fname']}} {{admin['lname']}}<br>{{admin['email']}}</span></p>
+<p>{{admin.adminDetail.fname}} {{admin.adminDetail.lname}}<br>{{admin.admin.email}}</span></p>
 {% endblock %}
 
 {% block image %}
@@ -55,7 +55,7 @@
 {% endblock %}
 
 {% block name_prof %}
-<h1>{{admin.fname}} {{admin.lname}}</h1>
+<h1>{{admin.adminDetail.fname}} {{admin.adminDetail.lname}}</h1>
 <h4>I'm Super-user 'Admin'</h4>
 {% endblock %}
 
@@ -97,11 +97,11 @@
     <div class="group">
         <div class="subgroup">
             <label for="">First Name</label>
-            <input type="text" name="fname" value="{{admin.admin.fname}}">
+            <input type="text" name="fname" value="{{admin.adminDetail.fname}}">
         </div>
         <div class="subgroup">
             <label for="">Last Name</label>
-            <input type="text" name="lname" value="{{admin.admin.lname}}">
+            <input type="text" name="lname" value="{{admin.adminDetail.lname}}">
         </div>
     </div>
     <hr>
