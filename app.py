@@ -347,10 +347,7 @@ def about():
 
 #==================Admin Control===========================#
 
-@HomeEase.route('/HomeEase/admin/<int:id>/home')
-@login_required
-def admin_home(id):
-
+def get_admin(id):
     user_admin = User.query.filter_by(id=id).first_or_404()
     admin_detail = Admin.query.filter_by(user_id=id).first_or_404()
 
@@ -359,21 +356,17 @@ def admin_home(id):
         picture_base64 = base64.b64encode(admin_detail.picture).decode('utf-8')
 
     adminData = {"admin":user_admin, "adminDetail":admin_detail, "picture":picture_base64, "mimetype":'image/png'}
-    return render_template("/Admin/home.html", admin=adminData)
+    return adminData
+
+@HomeEase.route('/HomeEase/admin/<int:id>/home')
+@login_required
+def admin_home(id):
+    return render_template("/Admin/home.html", admin=get_admin(id))
 
 @HomeEase.route('/HomeEase/admin/<int:id>/profile')
 @login_required
 def admin_profile(id):
-
-    user_admin = User.query.filter_by(id=id).first_or_404()
-    admin_detail = Admin.query.filter_by(user_id=id).first_or_404()
-
-    picture_base64=''
-    if admin_detail.picture:
-        picture_base64 = base64.b64encode(admin_detail.picture).decode('utf-8')
-
-    adminData = {"admin":user_admin, "adminDetail":admin_detail, "picture":picture_base64, "mimetype":'image/png'}
-    return render_template("/Admin/profile.html", admin=adminData)
+    return render_template("/Admin/profile.html", admin=get_admin(id))
 
 @HomeEase.route('/HomeEase/admin/<int:id>/change_password', methods=['GET', 'POST'])
 @login_required
@@ -433,14 +426,6 @@ def admin_update_information(id):
 @HomeEase.route('/HomeEase/admin/<int:id>/manage_users')
 @login_required
 def manage_users(id):
-    user_admin = User.query.filter_by(id=id).first_or_404()
-    admin_detail = Admin.query.filter_by(user_id=id).first_or_404()
-
-    picture_base64=''
-    if admin_detail.picture:
-        picture_base64 = base64.b64encode(admin_detail.picture).decode('utf-8')
-
-    adminData = {"admin":user_admin, "adminDetail":admin_detail, "picture":picture_base64, "mimetype":'image/png'}
 
     un_verified = Professional.query.filter_by(is_verified=0).all()
 
@@ -482,7 +467,7 @@ def manage_users(id):
 
     print("block",block_list)
 
-    return render_template("/Admin/manage_users.html", admin=adminData, un_verified=un_verified_list, actives=active_list, blocks=block_list)
+    return render_template("/Admin/manage_users.html", admin=get_admin(id), un_verified=un_verified_list, actives=active_list, blocks=block_list)
 
 @HomeEase.route('/HomeEase/admin/<int:id>/view_resume/<int:prof_id>')
 @login_required
@@ -537,15 +522,6 @@ def unblock_user(id,user_id):
 def view_user(id, user_id):
     user = User.query.filter_by(id=user_id).first_or_404()
 
-    user_admin = User.query.filter_by(id=id).first_or_404()
-    admin_detail = Admin.query.filter_by(user_id=id).first_or_404()
-
-    picture_base64=''
-    if admin_detail.picture:
-        picture_base64 = base64.b64encode(admin_detail.picture).decode('utf-8')
-
-    adminData = {"admin":user_admin, "adminDetail":admin_detail, "picture":picture_base64, "mimetype":'image/png'}
-
     if user.role.name=='professional':
         prof = Professional.query.filter_by(user_id=user.id).first_or_404()
         adrs = Address.query.filter_by(user_id=user_id).first_or_404()
@@ -563,20 +539,12 @@ def view_user(id, user_id):
         if cust.picture:
             picture_base64 = base64.b64encode(cust.picture).decode('utf-8')
         userData={"user":user, "userData":cust, "adrs":adrs, "picture":picture_base64, "mimetype":'image/png'}
-        return render_template("/Admin/view_user.html",admin=adminData, user=userData)
+        return render_template("/Admin/view_user.html",admin=get_admin(id), user=userData)
 
 @HomeEase.route('/HomeEase/admin/<int:id>/services')
 @login_required
 def services(id):
-    user_admin = User.query.filter_by(id=id).first_or_404()
-    admin_detail = Admin.query.filter_by(user_id=id).first_or_404()
-
-    picture_base64=''
-    if admin_detail.picture:
-        picture_base64 = base64.b64encode(admin_detail.picture).decode('utf-8')
-
-    adminData = {"admin":user_admin, "adminDetail":admin_detail, "picture":picture_base64, "mimetype":'image/png'}
-    return render_template('/Admin/services.html',admin=adminData)
+    return render_template('/Admin/services.html',admin=get_admin(id))
 #==================End Of Admin Control===========================#
 
 
