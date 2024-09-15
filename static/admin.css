@@ -114,40 +114,103 @@ body{
     & h2{
         color: 	#7393B3;
     }
+}
 
-    & table{
-        padding: 10px;
+table{
+    padding: 10px;
 
-        & thead{
-            letter-spacing: 1px;
-            color: 	#6082B6;
-            font-size: 20px
+    & thead{
+        letter-spacing: 1px;
+        color: 	#6082B6;
+        font-size: 20px}
+
+    & tbody{
+        & tr:nth-child(even){
+            color: 	#A7C7E7;
+        }
+        & a{
+            background-color: green;
+            padding: 3px 15px;
+            text-decoration: none;
+            border-radius: 3px;
+            color: #041E42;
         }
 
-        & tbody{
-            & tr:nth-child(even){
-                color: 	#A7C7E7;
-            }
-            & a{
-                background-color: green;
-                padding: 3px 15px;
-                text-decoration: none;
-                border-radius: 3px;
-                color: #041E42;
-            }
+        & tr:nth-child(odd){
+            background-color: #082b5c;
+            color: 	#4682B4;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+    }
+}
 
-            & tr:nth-child(odd){
-                background-color: #082b5c;
-                color: 	#4682B4;
-                font-weight: 500;
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid rgb(40, 59, 164);
+}
+
+#create-service{
+    display: flex;
+    margin-top: 40px;
+    justify-content: center;
+    & h2{
+        text-align: center;
+        color: #4682B4;
+        text-decoration: underline;
+    }
+    & h5{
+        color: #A7C7E7;
+    }
+    & form{
+        padding: 40px;
+        background-color: red;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 35%;
+        height: 580px;
+        background-color: #022352;
+        border-radius: 10px;
+        box-shadow: 1px 3px 15px rgba(0, 0, 0,0.3);
+
+        & input, & textarea{
+            outline: none;
+            border: 1px solid #1da1f2;
+            background-color: #022352;
+            border-radius: 3px;
+            padding: 2px 5px;
+            color: #1da1f2;
+            font-size: 18px;
+        }
+
+        & input[type='submit']{
+            color: #041E42;
+            background-color: #0bf713;
+            padding: 1px 20px;
+            font-weight: 500;
+        }
+
+        & #services{
+            background-color: transparent;
+            border: 1px solid #1da1f2;
+            color: #1da1f2;
+            font-size: 18px;
+            padding: 2px 5px;
+            border-radius: 3px;
+
+            & option{
+                background-color: #1F305E;
                 letter-spacing: 1px;
             }
         }
+        & #area{
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
 
-        & th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid rgb(40, 59, 164);
         }
     }
 }
