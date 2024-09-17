@@ -15,23 +15,32 @@ Create Services
 {% block main_content %}
 <div class="row" id="create-service">
     <h2>Create Service</h2>
-    <form action="">
+    <div id="flash" class="flash-box">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <h6 class="{{ category }}" style="text-align: center;">{{message}}</h6>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+    <form action="{{url_for('create_service',id=admin.admin.id)}}" method="post">
         <input type="text" name="name" placeholder="Service Name" required>
-        <select id="services" name="services" required>
+        <select id="services" name="service" required>
             <option value="NoSelected" disabled selected>Select a service type</option>
             <option value="plumbing">Plumbing</option>
             <option value="electrical">Electrical</option>
             <option value="cleaning">Cleaning</option>
             <option value="gardening">Gardening</option>
         </select>
-        <textarea name="description" cols="30" rows="2" placeholder="Description"></textarea>
+        <textarea name="description" cols="30" rows="2" placeholder="Description" required></textarea>
         <input type="number" name="price" placeholder="Price" required>
         <input type="number" name="duration" placeholder="Duration (Hours)" required>
         <div id="area">
             <h5>Service Area</h5>
             <input type="text" name="state" placeholder="State" required>
-            <input type="text" name="city" placeholder="City">
-            <input type="text" name="zipcode" placeholder="Zipcode">
+            <input type="text" name="city" placeholder="City" required>
+            <input type="text" name="zipcode" placeholder="Zipcode" required>
         </div>
         <div><input type="submit" value="Create"></div>
     </form>
