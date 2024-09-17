@@ -248,3 +248,41 @@ th, td {
         margin-top: 15px;
     }
 }
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    25% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 1;
+    }
+    75% {
+        opacity: 0.5;
+    }
+    100%{opacity: 0;
+        display: none;}
+}
+
+.flash-box{
+    animation: blink 5s forwards;
+
+}
+
+.success {
+    color: #4CAF50; /* Green */
+}
+
+.error {
+    color: #f44336; /* Red */
+}
+
+.warning {
+    color: #ff9800; /* Orange */
+}
+
+.info {
+    color: #2196F3; /* Blue */
+}
