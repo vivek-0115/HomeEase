@@ -121,7 +121,6 @@ class ServiceArea(db.Model):
     state = db.Column(db.String(50), nullable=True)
     city = db.Column(db.String(50), nullable=True)
     zipcode = db.Column(db.String(10), nullable=True)
-    street = db.Column(db.String(100), nullable=False)
 
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -165,7 +164,7 @@ with HomeEase.app_context():
                 )
                 db.session.add(admin_details)
                 db.session.commit()
-
+HomeEase.app_context().push()
 #==================End Of Databse Models===========================#
 
 @login_manager.user_loader
@@ -465,8 +464,6 @@ def manage_users(id):
             userData={"id":user.id, "fname":cust.fname, "lname":cust.fname, "email":user.email, "user_type":user.role.name}
             block_list.append(userData)
 
-    print("block",block_list)
-
     return render_template("/Admin/manage_users.html", admin=get_admin(id), un_verified=un_verified_list, actives=active_list, blocks=block_list)
 
 @HomeEase.route('/HomeEase/admin/<int:id>/view_resume/<int:prof_id>')
@@ -545,6 +542,53 @@ def view_user(id, user_id):
 @login_required
 def services(id):
     return render_template('/Admin/services.html',admin=get_admin(id))
+
+@HomeEase.route('/HomeEase/admin/<int:id>/create_services', methods=['GET', 'POST'])
+@login_required
+def create_service(id):
+    if request.method == 'POST':
+        name = request.form.get('name')
+        service = request.form.get('service')
+        description = request.form.get('description')
+        price = request.form.get('price')
+        duration = request.form.get('duration')
+
+        state = request.form.get('state')
+        city = request.form.get('city')
+        zipcode = request.form.get('zipcode')
+
+        if service:
+            exist_service = Service.query.filter_by( name=name, category=service, description=description,
+                                        price=price,duration=duration).first()
+            if not exist_service:
+                newService = Service(
+                    name=name, category=service, description=description,price=price,
+                    duration=duration, status='active'
+                    )
+                db.session.add(newService)
+                db.session.commit()
+
+            get_area = ServiceArea.query.filter_by(state=state, city=city, zipcode=zipcode).first()
+            if not get_area:
+                area = ServiceArea(state=state, city=city, zipcode=zipcode)
+                db.session.add(area)
+                db.session.commit()
+            
+            exist_area = ServiceArea.query.filter_by(state=state, city=city, zipcode=zipcode).first()
+            exist_service = Service.query.filter_by( name=name, category=service, description=description,
+            price=price,duration=duration).first()
+
+            service_area = ServiceAreaAssociation(service_id=exist_service.id,
+                                                        area_id=exist_area.id)
+            db.session.add(service_area)
+            db.session.commit()
+            
+        else:
+            flash('Please Selelct Service type.','warning')
+            return redirect(url_for('create_service',id=id))
+        flash('Service Created.','success')
+        return redirect(url_for('services',id=id))
+    return render_template('/Admin/create_service.html',admin=get_admin(id))
 #==================End Of Admin Control===========================#
 
 
