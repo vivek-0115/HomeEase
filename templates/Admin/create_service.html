@@ -13,6 +13,7 @@ Create Services
 {% endblock %}
 
 {% block main_content %}
+{% if msg == 'create' %}
 <div class="row" id="create-service">
     <h2>Create Service</h2>
     <div id="flash" class="flash-box">
@@ -45,4 +46,40 @@ Create Services
         <div><input type="submit" value="Create"></div>
     </form>
 </div>
+
+{% elif msg == 'edit' %}
+<div class="row" id="create-service">
+    <h2>Edit Service</h2>
+    <div id="flash" class="flash-box">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <h6 class="{{ category }}" style="text-align: center;">{{message}}</h6>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+    <form action="{{url_for('edit_service',id=admin.admin.id, srvs_id=service.id)}}" method="post">
+        <input type="text" name="name" placeholder="Service Name" value="{{service.name}}" required >
+        <select id="services" name="service" required>
+            <option value="NoSelected" disabled selected>Select a service type</option>
+            <option value="{{service.category}}" selected>{{service.category}}</option>
+            <option value="Plumbing">Plumbing</option>
+            <option value="Electrical">Electrical</option>
+            <option value="Cleaning">Cleaning</option>
+            <option value="Gardening">Gardening</option>
+        </select>
+        <textarea name="description" cols="30" rows="2" placeholder="Description" required>{{service.description}}</textarea>
+        <input type="number" name="price" placeholder="Price" value="{{service.price}}" required>
+        <input type="number" name="duration" placeholder="Duration (Hours)" value="{{service.duration}}" required>
+        <div id="area">
+            <h5>Service Area</h5>
+            <input type="text" name="state" placeholder="State" value="{{area.state}}" required>
+            <input type="text" name="city" placeholder="City" value="{{area.city}}" required>
+            <input type="text" name="zipcode" placeholder="Zipcode" value="{{area.zipcode}}" required>
+        </div>
+        <div><input type="submit" value="Update"></div>
+    </form>
+</div>
+{% endif %}
 {% endblock %}
