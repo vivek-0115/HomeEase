@@ -541,7 +541,8 @@ def view_user(id, user_id):
 @HomeEase.route('/HomeEase/admin/<int:id>/services')
 @login_required
 def services(id):
-    return render_template('/Admin/services.html',admin=get_admin(id))
+    services = Service.query.all()
+    return render_template('/Admin/services.html',admin=get_admin(id), services=services)
 
 @HomeEase.route('/HomeEase/admin/<int:id>/create_services', methods=['GET', 'POST'])
 @login_required
@@ -588,7 +589,39 @@ def create_service(id):
             return redirect(url_for('create_service',id=id))
         flash('Service Created.','success')
         return redirect(url_for('services',id=id))
-    return render_template('/Admin/create_service.html',admin=get_admin(id))
+    return render_template('/Admin/create_service.html',admin=get_admin(id), msg='create')
+
+@HomeEase.route('/HomeEase/admin/<int:id>/edit_service/<int:srvs_id>', methods=['GET', 'POST'])
+@login_required
+def edit_service(id, srvs_id):
+    service = Service.query.filter_by(id = srvs_id).first_or_404()
+    area = ServiceAreaAssociation.query.filter_by(service_id = service.id).first_or_404()
+    area_id = area.area_id
+    area = ServiceArea.query.filter_by(id = area_id).first_or_404()
+    if request.method == 'POST':
+        name = request.form.get('name')
+        category = request.form.get('service')
+        description = request.form.get('description')
+        price = request.form.get('price')
+        duration = request.form.get('duration')
+
+        state = request.form.get('state')
+        city = request.form.get('city')
+        zipcode = request.form.get('zipcode')
+
+        service.name = name
+        service.category = category
+        service.description = description
+        service.price = price
+        service.duration = duration
+
+        db.session.add(service)
+        db.session.commit()
+
+        return redirect(url_for('services',id=id))
+
+    return render_template('/Admin/create_service.html',admin=get_admin(id), services=services,
+    service=service,area=area, msg='edit')
 #==================End Of Admin Control===========================#
 
 
