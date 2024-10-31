@@ -215,6 +215,29 @@ th, td {
     }
 }
 
+#services{
+    /* background-color: red; */
+    margin-top: 25px;
+    &>div{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        &>a{
+            background-color: #1DA1F2;
+            padding: 5px 15px;
+            text-decoration: none;
+            border-radius: 3px;
+            color: #041E42;
+            font-weight: 500;
+        }
+    }
+    & a{
+        color: #022352;
+        text-decoration: none;
+    }
+}
+
 @media (max-width: 576px) { /* For small devices like phones */
     #nav {
         display: flex;
