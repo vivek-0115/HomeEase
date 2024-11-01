@@ -1,0 +1,14 @@
+{% extends "/Customer/home.html" %}
+
+{% block title %}
+ Customer Search 
+{% endblock %} 
+
+{% block nav %}
+<a href="{{url_for('customer_home',id=customer.id)}}" class="link">Home</a>
+<a href="{{url_for('customer_search',id=customer.id)}}" class="link">Search</a>
+<a href="{{url_for('customer_summary',id=customer.id)}}" id="current-link">Summary</a>
+<a href="{{url_for('customer',id=customer.id)}}" class="link">Profile</a>
+<a href="{{url_for('logout')}}" class="link">Logout</a>
+{% endblock %} 
+

@@ -1,0 +1,37 @@
+{% extends "/Customer/home.html" %}
+
+{% block title %}
+ Customer Search 
+{% endblock %} 
+
+{% block nav %}
+<a href="{{url_for('customer_home',id=customer.id)}}" id="current-link">Home</a>
+<a href="{{url_for('customer_search',id=customer.id)}}" class="current-link">Search</a>
+<a href="{{url_for('customer_summary',id=customer.id)}}" class="link">Summary</a>
+<a href="{{url_for('customer',id=customer.id)}}" class="link">Profile</a>
+<a href="{{url_for('logout')}}" class="link">Logout</a>
+{% endblock %} 
+
+{% block main_content %}
+
+
+
+<div class="row" id="s-history">
+    <h1>Service History</h1>
+    <table class="table" style="color: #fff;">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Price</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+         
+        </tbody>
+      </table>
+</div>
+
+{% endblock %}
