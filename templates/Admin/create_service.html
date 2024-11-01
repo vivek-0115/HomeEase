@@ -64,10 +64,10 @@ Create Services
         <select id="services" name="service" required>
             <option value="NoSelected" disabled selected>Select a service type</option>
             <option value="{{service.category}}" selected>{{service.category}}</option>
-            <option value="Plumbing">Plumbing</option>
-            <option value="Electrical">Electrical</option>
-            <option value="Cleaning">Cleaning</option>
-            <option value="Gardening">Gardening</option>
+            <option value="plumbing">Plumbing</option>
+            <option value="electrical">Electrical</option>
+            <option value="cleaning">Cleaning</option>
+            <option value="gardening">Gardening</option>
         </select>
         <textarea name="description" cols="30" rows="2" placeholder="Description" required>{{service.description}}</textarea>
         <input type="number" name="price" placeholder="Price" value="{{service.price}}" required>
