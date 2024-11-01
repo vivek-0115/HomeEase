@@ -28,6 +28,9 @@ Admin Services
     </div>
     <a href="{{url_for('create_service',id=admin.admin.id)}}">+ New Service</a>
 </div>
+{% if services == [] %}
+<h3>No Service Available</h3>
+{% else %}
 <div>
     <table class="table" style="color: #fff;">
         <thead>
@@ -48,14 +51,14 @@ Admin Services
             <td>{{service.category}}</td>
             <td>
               <a style="background-color: rgb(14, 162, 231);" href="{{url_for('edit_service',id=admin.admin.id, srvs_id=service.id)}}">Edit</a>
-              <a style="background-color: red;" href="">Delete</a>
+              <a style="background-color: red;" href="{{url_for('delete_service',id=admin.admin.id, srvs_id=service.id)}}">Delete</a>
             </td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
 </div>
-
+{% endif %}
 </div>
 
 <div class="row" id="service-request">
