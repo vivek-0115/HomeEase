@@ -2,9 +2,10 @@
 {% extends '/base.html' %}
 
 {% block nav %}
-<a href="" class="link">Home</a>
-<a href="" class="link">Wallet</a>
-<a href="" id="current-link">Profile</a>
+<a href="{{url_for('customer_home',id=data.id)}}" class="link">Home</a>
+<a href="{{url_for('customer_search',id=data.id)}}" class="link">Search</a>
+<a href="{{url_for('customer_summary',id=data.id)}}" class="link">Summary</a>
+<a href="{{url_for('customer',id=data.id)}}" id="current-link">Profile</a>
 <a href="{{url_for('logout')}}" class="link">Logout</a>
 {% endblock %}
 
