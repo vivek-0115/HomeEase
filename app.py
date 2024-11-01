@@ -222,9 +222,9 @@ def join_cust():
         lname = request.form.get('lname')
         email = request.form.get('email')
 
-        state = request.form.get('state')
-        city = request.form.get('city')
-        street = request.form.get('street')
+        state = request.form.get('state').lower()
+        city = request.form.get('city').lower()
+        street = request.form.get('street').lower()
         zipcode = request.form.get('zipcode')
 
         phone = request.form.get('phone')
@@ -554,9 +554,9 @@ def create_service(id):
         price = request.form.get('price')
         duration = request.form.get('duration')
 
-        state = request.form.get('state')
-        city = request.form.get('city')
-        zipcode = request.form.get('zipcode')
+        state = request.form.get('state').lower()
+        city = request.form.get('city').lower()
+        zipcode = request.form.get('zipcode').lower()
 
         if service:
             exist_service = Service.query.filter_by( name=name, category=service, description=description,
@@ -598,6 +598,7 @@ def edit_service(id, srvs_id):
     area = ServiceAreaAssociation.query.filter_by(service_id = service.id).first_or_404()
     area_id = area.area_id
     area = ServiceArea.query.filter_by(id = area_id).first_or_404()
+    service_area = ServiceAreaAssociation.query.filter_by(service_id=srvs_id).first_or_404()
     if request.method == 'POST':
         name = request.form.get('name')
         category = request.form.get('service')
@@ -605,9 +606,9 @@ def edit_service(id, srvs_id):
         price = request.form.get('price')
         duration = request.form.get('duration')
 
-        state = request.form.get('state')
-        city = request.form.get('city')
-        zipcode = request.form.get('zipcode')
+        state = request.form.get('state').lower()
+        city = request.form.get('city').lower()
+        zipcode = request.form.get('zipcode').lower()
 
         service.name = name
         service.category = category
@@ -618,10 +619,27 @@ def edit_service(id, srvs_id):
         db.session.add(service)
         db.session.commit()
 
+        get_area = ServiceArea.query.filter_by(state=state, city=city, zipcode=zipcode).first()
+        if not get_area:
+            area = ServiceArea(state=state, city=city, zipcode=zipcode)
+            db.session.add(area)
+            db.session.commit()
+        
+        exist_area = ServiceArea.query.filter_by(state=state, city=city, zipcode=zipcode).first()
+        service_area.area_id = exist_area.id
+
+        db.session.add(service_area)
+        db.session.commit()
+
         return redirect(url_for('services',id=id))
 
     return render_template('/Admin/create_service.html',admin=get_admin(id), services=services,
     service=service,area=area, msg='edit')
+
+@HomeEase.route('/HomeEase/admin/<int:id>/delete_service/<int:srvs_id>', methods=['GET', 'POST'])
+@login_required
+def delete_service(id, srvs_id):
+    return '<h2> Delete function not Created yet.'
 #==================End Of Admin Control===========================#
 
 
@@ -753,7 +771,43 @@ def professional_update_information(id):
 
 #==================Customers Control===========================#
 
-@HomeEase.route('/HomeEase/customer/<int:id>')
+def get_customer(id):
+    user_cust = User.query.filter_by(id=id).first_or_404()
+    customer = Customer.query.filter_by(user_id=id).first_or_404()
+
+    picture_base64=''
+    if customer.picture:
+        picture_base64 = base64.b64encode(customer.picture).decode('utf-8')
+
+    cust_data = {
+        "id":user_cust.id,
+        "fname":customer.fname, "lname":customer.lname, "email":user_cust.email,
+        "picture":picture_base64, "mimetype":'image/png'
+    }
+    return cust_data
+
+@HomeEase.route('/HomeEase/customer/<int:id>/home')
+@login_required
+def customer_home(id):
+    return render_template('/Customer/home.html', customer=get_customer(id))
+
+@HomeEase.route('/HomeEase/customer/<int:id>/<string:name>')
+@login_required
+def customer_viewService(id, name):
+    print(name)
+    return render_template('/Customer/viewService.html', customer=get_customer(id))
+
+@HomeEase.route('/HomeEase/customer/<int:id>/search')
+@login_required
+def customer_search(id):
+    return render_template('/Customer/search.html', customer=get_customer(id))
+
+@HomeEase.route('/HomeEase/customer/<int:id>/summary')
+@login_required
+def customer_summary(id):
+    return render_template('/Customer/summary.html', customer=get_customer(id))
+
+@HomeEase.route('/HomeEase/customer/<int:id>/profile')
 @login_required
 def customer(id):
     if current_user.id != id:
