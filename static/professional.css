@@ -138,3 +138,37 @@ body{
         margin-top: 15px;
     }
 }
+table{
+    padding: 10px;
+
+    & thead{
+        letter-spacing: 1px;
+        color: 	#6082B6;
+        font-size: 20px}
+
+    & tbody{
+        & tr:nth-child(even){
+            color: 	#A7C7E7;
+        }
+        & a{
+            background-color: green;
+            padding: 3px 15px;
+            text-decoration: none;
+            border-radius: 3px;
+            color: #041E42;
+        }
+
+        & tr:nth-child(odd){
+            background-color: #082b5c;
+            color: 	#4682B4;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+    }
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid rgb(40, 59, 164);
+}

@@ -82,11 +82,10 @@ body{
 
 #looking{
     margin-top: 50px;
- 
     & .col{
         display: flex;
         justify-content: center;
-        
+        width: 20%;
         padding: 20px 0;
         & .card{
             box-shadow: 0px 3px 15px rgba(0, 0, 0,0.3);
@@ -127,4 +126,31 @@ th, td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid rgb(40, 59, 164);
+}
+#pakage{
+    border-radius: 20px;
+    background-color: #4682B4;
+    padding: 20px 30px;
+    margin-top: 50px;
+    & .col-12{
+        background-color: #296697;
+        display: flex;
+        justify-content: center;
+        border-radius: 3px;
+        margin-bottom: 5px;
+        padding-bottom: 5px;
+        padding-top: 5px;
+
+        & p{
+            display: inline;
+        }
+        & a{
+            margin-left: 5px;
+            padding: 2px 25px;
+            border-radius: 3px;
+            background-color: rgb(30, 211, 243);
+            text-decoration: none;
+            color: #082b5c;
+        }
+    }
 }
