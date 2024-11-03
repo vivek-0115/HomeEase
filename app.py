@@ -527,7 +527,7 @@ def view_user(id, user_id):
         if prof.picture:
             picture_base64 = base64.b64encode(prof.picture).decode('utf-8')
         userData={"user":user, "userData":prof, "adrs":adrs, "picture":picture_base64, "mimetype":'image/png'}
-        return render_template("/Admin/view_user.html",admin=adminData, user=userData)
+        return render_template("/Admin/view_user.html",admin=get_admin(id), user=userData)
     elif user.role.name == 'customer':
         cust = Customer.query.filter_by(user_id=user.id).first_or_404()
         adrs = Address.query.filter_by(user_id=user_id).first_or_404()
@@ -542,7 +542,20 @@ def view_user(id, user_id):
 @login_required
 def services(id):
     services = Service.query.all()
-    return render_template('/Admin/services.html',admin=get_admin(id), services=services)
+
+    admin_requests_data=[]
+    admin_requests = ServiceRequest.query.all()
+
+    for req in admin_requests:
+        cust = Customer.query.filter_by(id=req.customer_id).first_or_404()
+        srvs = Service.query.filter_by(id = req.service_id).first_or_404()
+
+        if req.professional_id:
+            prof = Professional.query.filter_by(id = request.professional_id).first_or_404()
+            admin_requests_data.append((req,srvs,prof,cust))
+        admin_requests_data.append((req,srvs,'',cust))
+
+    return render_template('/Admin/services.html',admin=get_admin(id), services=services, requests=admin_requests_data)
 
 @HomeEase.route('/HomeEase/admin/<int:id>/create_services', methods=['GET', 'POST'])
 @login_required
@@ -644,60 +657,76 @@ def delete_service(id, srvs_id):
 
 
 #==================Professionals Control===========================#
+def get_professional(id):
+    user_prof = User.query.filter_by(id=id).first_or_404()
+    professional = Professional.query.filter_by(user_id=id).first_or_404()
+    adrs = Address.query.filter_by(user_id=id).first_or_404()
+
+     # Convert binary image data to Base64
+    picture_base64=''
+    if professional.picture:
+        picture_base64 = base64.b64encode(professional.picture).decode('utf-8')
+
+    return {
+        "id":user_prof.id, 'type':professional.service_type,
+        "fname":professional.fname, "lname":professional.lname, "email":user_prof.email,
+        "phone":professional.phone_no, "state":adrs.state, "city":adrs.city,"experience":professional.experience,
+        "street":adrs.street, "zipcode":adrs.zipcode, "is_verified":professional.is_verified,
+        "picture":picture_base64, "mimetype":'image/png'
+    }
 
 @HomeEase.route('/HomeEase/professioinal/<int:id>/home')
 @login_required
 def professional_home(id):
+    professional=get_professional(id)
+    services = Service.query.filter_by(category=professional['type']).all()
+    
+    req_detail = []
 
-    if current_user.id != id:
+    for service in services:
+        requests = service.service_requests
+        for req in requests:
+            cust = Customer.query.filter_by(id = req.customer_id).first_or_404()
+            cust_addr = Address.query.filter_by(user_id=cust.user_id).first_or_404()
+            srvs = Service.query.filter_by(id=req.service_id).first_or_404()
+            req_detail.append((cust, cust_addr, srvs, req))
+
+    print(req_detail)
+  
+    return render_template('/Professional/home.html', professional=professional, req_detail=req_detail)
+
+@HomeEase.route('/HomeEase/professioinal/<int:id>/search')
+@login_required
+def professional_search(id):
+    
+    professional = get_professional(id)
+
+    if not professional['is_verified']:
         return abort(403)
 
-    user_prof = User.query.filter_by(id=id).first_or_404()
-    professional = Professional.query.filter_by(user_id=id).first_or_404()
-    adrs = Address.query.filter_by(user_id=id).first_or_404()
+    return render_template('/Professional/search.html', professional=professional)
 
-     # Convert binary image data to Base64
-    picture_base64=''
-    if professional.picture:
-        picture_base64 = base64.b64encode(professional.picture).decode('utf-8')
+@HomeEase.route('/HomeEase/professioinal/<int:id>/summary')
+@login_required
+def professional_summary(id):
+    
+    professional = get_professional(id)
 
-    prof_data = {
-        "id":user_prof.id,
-        "fname":professional.fname, "lname":professional.lname, "email":user_prof.email,
-        "phone":professional.phone_no, "state":adrs.state, "city":adrs.city,"experience":professional.experience,
-        "street":adrs.street, "zipcode":adrs.zipcode, "is_verified":professional.is_verified,
-        "picture":picture_base64, "mimetype":'image/png'
-    }
-    return render_template('/Professional/home.html', professional=prof_data)
+    if not professional['is_verified']:
+        return abort(403)
+
+    return render_template('/Professional/summary.html', professional=professional)
 
 @HomeEase.route('/HomeEase/professioinal/<int:id>/profile')
 @login_required
 def professional_profile(id):
-
-    if current_user.id != id:
-        return abort(403)
     
-    professional = Professional.query.filter_by(user_id=id).first_or_404()
+    professional = get_professional(id)
 
-    if not professional.is_verified:
+    if not professional['is_verified']:
         return abort(403)
 
-    user_prof = User.query.filter_by(id=id).first_or_404()
-    adrs = Address.query.filter_by(user_id=id).first_or_404()
-
-     # Convert binary image data to Base64
-    picture_base64=''
-    if professional.picture:
-        picture_base64 = base64.b64encode(professional.picture).decode('utf-8')
-
-    prof_data = {
-        "id":user_prof.id,
-        "fname":professional.fname, "lname":professional.lname, "email":user_prof.email,
-        "phone":professional.phone_no, "state":adrs.state, "city":adrs.city,"experience":professional.experience,
-        "street":adrs.street, "zipcode":adrs.zipcode, "is_verified":professional.is_verified,
-        "picture":picture_base64, "mimetype":'image/png'
-    }
-    return render_template('/Professional/profile.html', data=prof_data)
+    return render_template('/Professional/profile.html', data=professional)
 
 @HomeEase.route('/HomeEase/professional/<int:id>/change_profile', methods=['GET', 'POST'])
 @login_required
@@ -786,16 +815,47 @@ def get_customer(id):
     }
     return cust_data
 
+def get_request(id):
+    request_data = []
+    cust = Customer.query.filter_by(user_id=id).first_or_404()
+    requests = ServiceRequest.query.filter_by(customer_id=cust.id).all()
+    
+    if requests != []:
+        for request in requests:
+            service = Service.query.filter_by(id = request.service_id).first_or_404()
+            if request.professional_id:
+                prof = Professional.query.filter_by(id = request.professional_id).first_or_404()
+                request_data.append((request,service,prof,cust))
+            request_data.append((request,service,'',cust))
+        return request_data
+    else:
+        return []
+
 @HomeEase.route('/HomeEase/customer/<int:id>/home')
 @login_required
 def customer_home(id):
-    return render_template('/Customer/home.html', customer=get_customer(id))
+    requests=get_request(id)
+    return render_template('/Customer/home.html', customer=get_customer(id), requests=get_request(id))
 
 @HomeEase.route('/HomeEase/customer/<int:id>/<string:name>')
 @login_required
 def customer_viewService(id, name):
     print(name)
-    return render_template('/Customer/viewService.html', customer=get_customer(id))
+    services = Service.query.filter_by(category=name.lower()).all()
+    
+    return render_template('/Customer/viewService.html', customer=get_customer(id), services = services, name = name, requests=get_request(id))
+
+@HomeEase.route('/HomeEase/customer/<int:id>/<string:name>/<int:srvs_id>/request')
+@login_required
+def customer_serviceRequest(id, name, srvs_id):
+    print(name, 'Booked', srvs_id)
+    cust=Customer.query.filter_by(user_id=id).first_or_404()
+    print(cust)
+    request = ServiceRequest(service_id=srvs_id, customer_id=cust.id)
+    
+    db.session.add(request)
+    db.session.commit()
+    return redirect(url_for('customer_viewService', id=id, name=name))
 
 @HomeEase.route('/HomeEase/customer/<int:id>/search')
 @login_required
@@ -810,8 +870,6 @@ def customer_summary(id):
 @HomeEase.route('/HomeEase/customer/<int:id>/profile')
 @login_required
 def customer(id):
-    if current_user.id != id:
-        return abort(403)
 
     user_cust = User.query.filter_by(id=id).first_or_404()
     customer = Customer.query.filter_by(user_id=id).first_or_404()
@@ -900,4 +958,4 @@ def update_information(id):
 #==================Customers Control End===========================#
 
 if __name__ == "__main__":
-    HomeEase.run(debug=True, host='192.168.29.7', port=5000)
+    HomeEase.run(debug=True)
