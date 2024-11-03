@@ -1,10 +1,15 @@
 <!--Customer Home Page-->
 {% extends '/base.html' %}
 
+{% block title %}
+    Professional Profile
+{% endblock %}
+
 {% block nav %}
 <a href="{{url_for('professional_home',id=data.id)}}" class="link">Home</a>
-<a href="" class="link">Wallet</a>
-<a href="" id="current-link">Profile</a>
+<a href="{{url_for('professional_search',id=data.id)}}" class="link">Search</a>
+<a href="{{url_for('professional_summary',id=data.id)}}" class="link">Summary</a>
+<a href="{{url_for('professional_profile',id=data.id)}}" id="current-link">Profile</a>
 <a href="{{url_for('logout')}}" class="link">Logout</a>
 {% endblock %}
 
