@@ -63,6 +63,33 @@ Admin Services
 
 <div class="row" id="service-request">
 <h1>Service Request</h1>
+<table class="table" style="color: #fff;">
+  <thead>
+    <tr>
+      <th>Req.ID</th>
+      <th>Service Name</th>
+      <th>Professional Name</th>
+      <th>Phone Number</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+      {% for request,service,prof,cust in requests %}
+      <tr>
+          <td>{{request.id}}</td>
+          <td>{{service.name}}</td>
+          {% if prof=='' %}
+          <td></td>
+          <td></td>
+          {% else %}
+          <td>{{prof.fname}} {{prof.lname}}</td>
+          <td>{{prof.phone_no}}</td>
+          {% endif %}
+          <td>{{request.service_status}}</td>
+      </tr>
+      {% endfor %}
+  </tbody>
+</table>
 </div>
 
 {% endblock %}
