@@ -56,7 +56,7 @@
                 <h4>Looking for?</h4>
             </div>
             <div class="col">
-                <div class="card" style="width: 16rem;height: 15rem;">
+                <div class="card" style="width: 14rem;height: 14rem;">
                     <img src="https://images.pexels.com/photos/48889/cleaning-washing-cleanup-the-ilo-48889.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" class="card-img-top" alt="...">
                     <div class="card-body">
                       <a href="{{url_for('customer_viewService',id=customer.id, name='Cleaning')}}" class="btn btn-primary">Cleaning</a>
@@ -64,7 +64,7 @@
                 </div>
             </div>
             <div class="col"> 
-                <div class="card" style="width: 16rem;height: 15rem;">
+                <div class="card" style="width: 14rem;height: 14rem;">
                     <img src="https://images.pexels.com/photos/8774645/pexels-photo-8774645.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" class="card-img-top" alt="...">
                     <div class="card-body">
                       <a href="{{url_for('customer_viewService',id=customer.id, name='Plumbing')}}" class="btn btn-primary">Plumbing</a>
@@ -72,7 +72,7 @@
                 </div>
             </div>
             <div class="col">
-                <div class="card" style="width: 16rem;height: 15rem;">
+                <div class="card" style="width: 14rem;height: 14rem;">
                     <img src="https://images.pexels.com/photos/48889/cleaning-washing-cleanup-the-ilo-48889.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" class="card-img-top" alt="...">
                     <div class="card-body">
                       <a href="{{url_for('customer_viewService',id=customer.id, name='Electrical')}}" class="btn btn-primary">Electrical</a>
@@ -80,7 +80,7 @@
                 </div>
             </div>
             <div class="col">
-                <div class="card" style="width: 16rem;height: 15rem;">
+                <div class="card" style="width: 14rem;height: 14rem;">
                     <img src="https://images.pexels.com/photos/48889/cleaning-washing-cleanup-the-ilo-48889.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" class="card-img-top" alt="...">
                     <div class="card-body">
                       <a href="{{url_for('customer_viewService',id=customer.id, name='Carpentry')}}" class="btn btn-primary">Carpentry</a>
@@ -88,7 +88,7 @@
                 </div>
             </div>
             <div class="col">
-                <div class="card" style="width: 16rem;height: 15rem;">
+                <div class="card" style="width: 14rem;height: 14rem;">
                     <img src="https://images.pexels.com/photos/48889/cleaning-washing-cleanup-the-ilo-48889.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" class="card-img-top" alt="...">
                     <div class="card-body">
                       <a href="{{url_for('customer_viewService',id=customer.id, name='Gardening')}}" class="btn btn-primary">Gardening</a>
@@ -103,15 +103,28 @@
             <table class="table" style="color: #fff;">
                 <thead>
                   <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Price</th>
-                    <th>Actions</th>
+                    <th>Req.ID</th>
+                    <th>Service Name</th>
+                    <th>Professional Name</th>
+                    <th>Phone Number</th>
+                    <th>Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                 
+                    {% for request,service,prof,_ in requests %}
+                    <tr>
+                        <td>{{request.id}}</td>
+                        <td>{{service.name}}</td>
+                        {% if prof=='' %}
+                        <td></td>
+                        <td></td>
+                        {% else %}
+                        <td>{{prof.fname}} {{prof.lname}}</td>
+                        <td>{{prof.phone_no}}</td>
+                        {% endif %}
+                        <td>{{request.service_status}}</td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
               </table>
         </div>

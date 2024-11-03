@@ -1,7 +1,7 @@
 {% extends "/Customer/home.html" %}
 
 {% block title %}
- Customer Search 
+ Service Detail
 {% endblock %} 
 
 {% block nav %}
@@ -14,24 +14,55 @@
 
 {% block main_content %}
 
+<div class="row" id="pakage">
+  <div class="col-12" style="margin-bottom: 20px;background: none;">
+    <h2>Best {{name}} Pakages</h2>
+  </div>
+  {% if services == [] %}
+  <div class="col-12"><h3>no pack</h3></div>
+  {% else %}
+  {% for service in services %}
+  <div class="col-12">
+    <div>
+      <{{loop.index}}>  |
+      <p>{{service.description}} | only at {{service.price}}</p>
+      <a href="{{url_for('customer_serviceRequest',id=customer.id,name=name, srvs_id=service.id)}}">Book</a>
+    </div>
+  </div>
+  {% endfor %}
+  {% endif %}
+</div>
 
 
 <div class="row" id="s-history">
-    <h1>Service History</h1>
-    <table class="table" style="color: #fff;">
-        <thead>
+  <h1>Service History</h1>
+  <table class="table" style="color: #fff;">
+      <thead>
+        <tr>
+          <th>Req.ID</th>
+          <th>Service Name</th>
+          <th>Professional Name</th>
+          <th>Phone Number</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for request,service,prof,_ in requests %}
           <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Price</th>
-            <th>Actions</th>
+              <td>{{request.id}}</td>
+              <td>{{service.name}}</td>
+              {% if prof=='' %}
+              <td></td>
+              <td></td>
+              {% else %}
+              <td>{{prof.fname}} {{prof.lname}}</td>
+              <td>{{prof.phone_no}}</td>
+              {% endif %}
+              <td>{{request.service_status}}</td>
           </tr>
-        </thead>
-        <tbody>
-         
-        </tbody>
-      </table>
+          {% endfor %}
+      </tbody>
+    </table>
 </div>
 
 {% endblock %}
