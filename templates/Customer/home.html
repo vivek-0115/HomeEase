@@ -122,7 +122,13 @@
                         <td>{{prof.fname}} {{prof.lname}}</td>
                         <td>{{prof.phone_no}}</td>
                         {% endif %}
-                        <td>{{request.service_status}}</td>
+                        {% if request.service_status == 'accepted' %}
+                        <td>
+                            <a href="{{url_for('customer_review',id=customer.id, req_id=request.id)}}">close it?</a>
+                        </td>
+                        {% else %}
+                        <td style="text-transform: capitalize;">{{request.service_status}}</td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>

@@ -60,7 +60,7 @@
         {% else %}
         {% block main_content %}
             <div class="row">
-                <h1>Services</h1>
+                <h1>Todays's Services</h1>
                 <table class="table" style="color: #fff;">
                     <thead>
                       <tr>
@@ -76,14 +76,42 @@
                         {% for cust,addr,srvs, req in req_detail %}
                             <tr>
                                 <td>{{req.id}}</td>
-                                <td>{{srvs.name}}</td>
+                                <td>{{srvs.id}}. {{srvs.name}}</td>
                                 <td>{{cust.fname}}{{cust.lname}}</td>
                                 <td>{{cust.phone_no}}</td>
                                 <td>{{addr.state}}, {{addr.city}}, {{addr.zipcode}}</td>
                                 <td>
-                                    <a href="">Accept</a>
-                                    <a href="" style="background-color: rgb(235, 30, 30);">Reject</a>
+                                    <a href="{{url_for('reject_request',id=professional.id, request_id=req.id)}}" style="background-color: rgb(235, 30, 30);">Reject</a>
+                                    <a href="{{url_for('accept_request',id=professional.id, request_id=req.id)}}">Accept</a>
                                 </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                  </table>
+            </div>
+
+            <div class="row">
+                <h1>Active Services</h1>
+                <table class="table" style="color: #fff;">
+                    <thead>
+                      <tr>
+                        <th>Req.ID</th>
+                        <th>Service Name(& id)</th>
+                        <th>Customer Name</th>
+                        <th>Phone Number</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {% for cust,addr,srvs, req in active %}
+                            <tr>
+                                <td>{{req.id}}</td>
+                                <td>{{srvs.id}}. {{srvs.name}}</td>
+                                <td>{{cust.fname}}{{cust.lname}}</td>
+                                <td>{{cust.phone_no}}</td>
+                                <td>{{addr.state}}, {{addr.city}}, {{addr.zipcode}}</td>
+                                <td style="text-transform: capitalize;">{{req.service_status}}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -96,14 +124,25 @@
                     <thead>
                       <tr>
                         <th>Req.ID</th>
-                        <th>Service Name</th>
-                        <th>Professional Name</th>
+                        <th>Service Name(& id)</th>
+                        <th>Customer Name</th>
                         <th>Phone Number</th>
-                        <th>Status</th>
+                        <th>Location</th>
+                        <th>Date</th>
+                        <th>Rating</th>
                       </tr>
                     </thead>
                     <tbody>
-                        
+                        {% for cust,addr,srvs, req in closed %}
+                            <tr>
+                                <td>{{req.id}}</td>
+                                <td>{{srvs.id}}. {{srvs.name}}</td>
+                                <td>{{cust.fname}}{{cust.lname}}</td>
+                                <td>{{cust.phone_no}}</td>
+                                <td>{{addr.state}}, {{addr.city}}, {{addr.zipcode}}</td>
+                                <td style="text-transform: capitalize;">{{req.service_status}}</td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                   </table>
             </div>
