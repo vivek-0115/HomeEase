@@ -130,16 +130,16 @@
                         <td style="text-transform: capitalize;">{{request.service_status}}</td>
                         <td>
                             {% if request.service_status == 'accepted' %}
-                            <a href="{{url_for('customer_review',id=customer.id, req_id=request.id)}}" style="color: #041E42;" >Review & Close it?</a>
+                            <a href="{{url_for('customer_review',id=customer.id, req_id=request.id)}}" style="background-color: #1da1f2;color: #042e42;" >Review & Close it?</a>
                             {% elif request.service_status == 'closed' %}
-                            <a href="" style="cursor: not-allowed;background-color: rgb(40, 102, 40);color: #41856b;">closed</a>
+                            <a href="" style="cursor: not-allowed;background-color: rgb(212, 154, 27);color: #856541;">closed</a>
                                 {% if reviewed %}
                                  & <a href="" style="cursor: not-allowed;background-color: rgb(40, 102, 40);color: #41856b;">Reviewed</a>
                                 {% else %}
                                 <a href="{{url_for('customer_review',id=customer.id, req_id=request.id)}}" style="background-color: #1da1f2;color: #041E42;">Review</a>
                                 {% endif %}
                             {% else %}
-                            <a href="" style="cursor: not-allowed;background-color: rgb(40, 102, 40);color: #41856b;">Review & Close it?</a>
+                            <a href="" style="cursor: not-allowed;background-color: #9b6502;;color: #70491d;">Review & Close it?</a>
                             {% endif %}
 
                         </td>  

@@ -79,7 +79,9 @@ Admin Profile
 
 {% block join_date %}
 <div class="col-3" class="title" style="color: #2774AE;">Created on</div>
-<div class="col-9" style="color: #1da1f2;">12/05/2022</div>
+<div class="col-9" style="color: #1da1f2;">{{admin.admin.created_at.strftime("%d/%m/%y")}} at 
+    {{admin.admin.created_at.strftime("%H-%M")}}
+</div>
 {% endblock %}
 
 {% block experience %}
