@@ -1,0 +1,72 @@
+{% extends "/Customer/home.html" %}
+
+{% block title %}
+ Customer Search 
+
+{% endblock %} 
+
+{% block nav %}
+
+{% endblock %} 
+
+{% block main_content %}
+<a href="{{url_for('customer_home', id=customer.id)}}">< Back</a>
+
+<div class="row" style="display: flex; justify-content: center;">
+    <div id="review">
+        <div id="header">
+            <h2>Service Remark</h2>
+            <h4>Request ID: {{req.id}}</h4>
+        </div>
+        <hr>
+        <div id="details">
+            <div>
+                <span style="font-size: 1.3rem;">
+                    Service
+                </span>
+                <br>
+                 {{service.name}} || {{service.description}}
+            </div>
+            <hr>
+            <div>
+                <span style="font-size: 1.3rem;">
+                    Professional
+                </span>
+                <br>
+                {{prof.id}} || {{prof.fname}} {{prof.lname}} || {{prof.phone_no}}
+            </div>
+        </div>
+        <hr>
+        <div id="remark">
+            <form action="{{url_for('submit_review', id=customer.id, req_id=req.id)}}" method="post">
+                <div id="rate">
+                    <div id="emoji">
+                        <span>😡</span>
+                        <span>😟</span>
+                        <span>😊</span>
+                        <span>😀</span>
+                        <span>😍</span>
+                    </div>
+                    <div id="ratings">
+                        <label for="range" style="font-size: 1.5rem;margin-right: 10px">Service Rating:</label>
+                        <input type="range" id="rating" name="rating" min="1" max="5" required>
+                    </div>
+                    <hr>
+                    <div>
+                        <label for="remark" style="font-size: 1.5rem;margin-right: 10px" >Remark (if any):</label>
+                        <textarea name="remark" cols="33" id="remark"></textarea>
+                    </div>
+                    <hr>
+                    <div style="display: flex;justify-content: space-around;">
+                        <input type="submit">
+                        <a href="{{url_for('customer_home', id=customer.id)}}">Cancel</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
