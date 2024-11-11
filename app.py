@@ -4,7 +4,7 @@ from flask import Flask, render_template, redirect, url_for, request, flash, abo
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+import datetime
 import base64
 import os,io
 import fitz
@@ -101,6 +101,8 @@ class Service(db.Model):
     duration = db.Column(db.String(50), nullable=False)
     status = db.Column(db.String(20), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    rating = db.Column(db.Numeric(3,1), default=0)
+    review_count = db.Column(db.Integer, default=0)
 
     service_requests = db.relationship('ServiceRequest', backref='service', lazy=True)
     reviews = db.relationship('Review', backref='service', lazy=True)
@@ -115,6 +117,12 @@ class ServiceRequest(db.Model):
     date_of_completion = db.Column(db.DateTime, nullable=True)
     service_status = db.Column(db.String(20), default='requested', nullable=False)
     remarks = db.Column(db.Text, nullable=True)
+
+class RejectedService(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    professional_id = db.Column(db.Integer, db.ForeignKey('professional.id'), nullable=False)
+    service_request_id = db.Column(db.Integer, db.ForeignKey('service_request.id'), nullable=False)
+    date_of_rejection = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
 
 class ServiceArea(db.Model):  
     id = db.Column(db.Integer, primary_key=True)
@@ -218,13 +226,13 @@ def logout():       #Login and their logics
 @HomeEase.route("/home/join/customer_registration", methods=['GET', 'POST'])
 def join_cust():
     if request.method == 'POST':
-        fname = request.form.get('fname')
-        lname = request.form.get('lname')
-        email = request.form.get('email')
+        fname = request.form.get('fname').strip()
+        lname = request.form.get('lname').strip()
+        email = request.form.get('email').strip()
 
-        state = request.form.get('state').lower()
-        city = request.form.get('city').lower()
-        street = request.form.get('street').lower()
+        state = request.form.get('state').strip().lower()
+        city = request.form.get('city').strip().lower()
+        street = request.form.get('street').strip().lower()
         zipcode = request.form.get('zipcode')
 
         phone = request.form.get('phone')
@@ -551,9 +559,10 @@ def services(id):
         srvs = Service.query.filter_by(id = req.service_id).first_or_404()
 
         if req.professional_id:
-            prof = Professional.query.filter_by(id = request.professional_id).first_or_404()
+            prof = Professional.query.filter_by(id = req.professional_id).first_or_404()
             admin_requests_data.append((req,srvs,prof,cust))
-        admin_requests_data.append((req,srvs,'',cust))
+        else:
+            admin_requests_data.append((req,srvs,'',cust))
 
     return render_template('/Admin/services.html',admin=get_admin(id), services=services, requests=admin_requests_data)
 
@@ -668,7 +677,7 @@ def get_professional(id):
         picture_base64 = base64.b64encode(professional.picture).decode('utf-8')
 
     return {
-        "id":user_prof.id, 'type':professional.service_type,
+        "id":user_prof.id, 'prof_id':professional.id, 'type':professional.service_type,
         "fname":professional.fname, "lname":professional.lname, "email":user_prof.email,
         "phone":professional.phone_no, "state":adrs.state, "city":adrs.city,"experience":professional.experience,
         "street":adrs.street, "zipcode":adrs.zipcode, "is_verified":professional.is_verified,
@@ -680,20 +689,65 @@ def get_professional(id):
 def professional_home(id):
     professional=get_professional(id)
     services = Service.query.filter_by(category=professional['type']).all()
+    rejected = RejectedService.query.filter_by(professional_id=professional['prof_id']).all()
+    
+    rejected_req = [rej.service_request_id for rej in rejected]
     
     req_detail = []
+    active = []
+    closed = []
 
     for service in services:
         requests = service.service_requests
         for req in requests:
-            cust = Customer.query.filter_by(id = req.customer_id).first_or_404()
-            cust_addr = Address.query.filter_by(user_id=cust.user_id).first_or_404()
-            srvs = Service.query.filter_by(id=req.service_id).first_or_404()
-            req_detail.append((cust, cust_addr, srvs, req))
+            if req.id not in rejected_req:
+                cust = Customer.query.filter_by(id = req.customer_id).first_or_404()
+                cust_addr = Address.query.filter_by(user_id=cust.user_id).first_or_404()
+                srvs = Service.query.filter_by(id=req.service_id).first_or_404()
 
-    print(req_detail)
-  
-    return render_template('/Professional/home.html', professional=professional, req_detail=req_detail)
+                if req.service_status=='requested':
+                    req_detail.append((cust, cust_addr, srvs, req))
+
+                elif req.service_status=='accepted':
+                    active.append((cust, cust_addr, srvs, req))
+
+                elif req.service_status=='closed':
+                    closed.append((cust, cust_addr, srvs, req))
+
+    
+    return render_template('/Professional/home.html', professional=professional, 
+    req_detail=req_detail, active=active, closed=closed)
+
+@HomeEase.route('/HomeEase/professioinal/<int:id>/home/accept_service/<int:request_id>')
+@login_required
+def accept_request(id, request_id):
+
+    professional = Professional.query.filter_by(user_id=id).first_or_404()
+    service_req = ServiceRequest.query.filter_by(id=request_id).first_or_404()
+
+    if service_req.service_status=='accepted':
+        return "<h3>Already Accepted by another professional, please refresh your page.</h3>"
+    else:
+        service_req.professional_id=professional.id
+        service_req.service_status='accepted'
+
+        db.session.add(service_req)
+        db.session.commit()
+
+    return redirect(url_for('professional_home', id=id))
+
+@HomeEase.route('/HomeEase/professioinal/<int:id>/home/reject_service/<int:request_id>')
+@login_required
+def reject_request(id, request_id):
+
+    professional = Professional.query.filter_by(user_id=id).first_or_404()
+
+    reject = RejectedService(professional_id=professional.id, service_request_id=request_id)
+
+    db.session.add(reject)
+    db.session.commit()
+
+    return redirect(url_for('professional_home', id=id))
 
 @HomeEase.route('/HomeEase/professioinal/<int:id>/search')
 @login_required
@@ -826,7 +880,9 @@ def get_request(id):
             if request.professional_id:
                 prof = Professional.query.filter_by(id = request.professional_id).first_or_404()
                 request_data.append((request,service,prof,cust))
-            request_data.append((request,service,'',cust))
+            else:
+                request_data.append((request,service,'',cust))
+        
         return request_data
     else:
         return []
@@ -835,12 +891,11 @@ def get_request(id):
 @login_required
 def customer_home(id):
     requests=get_request(id)
-    return render_template('/Customer/home.html', customer=get_customer(id), requests=get_request(id))
+    return render_template('/Customer/home.html', customer=get_customer(id), requests=requests)
 
 @HomeEase.route('/HomeEase/customer/<int:id>/<string:name>')
 @login_required
 def customer_viewService(id, name):
-    print(name)
     services = Service.query.filter_by(category=name.lower()).all()
     
     return render_template('/Customer/viewService.html', customer=get_customer(id), services = services, name = name, requests=get_request(id))
@@ -856,6 +911,52 @@ def customer_serviceRequest(id, name, srvs_id):
     db.session.add(request)
     db.session.commit()
     return redirect(url_for('customer_viewService', id=id, name=name))
+
+@HomeEase.route('/HomeEase/customer/<int:id>/review/<int:req_id>')
+@login_required
+def customer_review(id, req_id):
+    service_req = ServiceRequest.query.filter_by(id=req_id).first_or_404()
+    prof = Professional.query.filter_by(id=service_req.professional_id).first_or_404()
+    service = Service.query.filter_by(id=service_req.service_id).first_or_404()
+
+    if service_req.service_status=='closed':
+        return "<h3>Review Already Submitted, please go back and refresh the page.</h3>"
+    
+    return render_template('/Customer/review.html', customer=get_customer(id), 
+                    req=service_req,prof=prof, service=service)
+
+@HomeEase.route('/HomeEase/customer/<int:id>/review/<int:req_id>/submit', methods=['GET', 'POST'])
+@login_required
+def submit_review(id, req_id):
+    cust = Customer.query.filter_by(user_id=id).first_or_404()
+    service_req = ServiceRequest.query.filter_by(id=req_id).first_or_404()
+    service = Service.query.filter_by(id=service_req.service_id).first_or_404()
+    if request.method=='POST':
+        star = int(request.form.get('rating'))
+        remark = request.form.get('remark')
+        
+        if remark == "":
+            review = Review(service_id=service.id, customer_id=cust.id, stars=star)
+        else:
+            review = Review(service_id=service.id, customer_id=cust.id, stars=star, remark=remark.strip())
+        db.session.add(review)
+        service_req.service_status = 'closed'
+        service_req.date_of_completion = datetime.datetime.now()
+
+        # Calculating Review Rating Star.
+        review_count = int(service.review_count) + 1
+        rating = int(service.rating)+star
+        new_rating = rating/review_count
+
+        service.rating = round(new_rating,1)
+        service.review_count = review_count
+        
+        db.session.add(service)
+        db.session.add(service_req)
+
+        db.session.commit()
+
+    return redirect(url_for('customer_home', id=id))
 
 @HomeEase.route('/HomeEase/customer/<int:id>/search')
 @login_required
