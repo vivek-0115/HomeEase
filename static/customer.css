@@ -117,7 +117,6 @@ table{
             background-color: #082b5c;
             color: 	#4682B4;
             font-weight: 500;
-            letter-spacing: 1px;
         }
     }
 }
@@ -151,6 +150,52 @@ th, td {
             background-color: rgb(30, 211, 243);
             text-decoration: none;
             color: #082b5c;
+        }
+    }
+}
+#review{
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #082b5c;
+    border-radius: 3px;
+    padding: 10px 30px;
+    width: 75%;
+    
+    
+    & #remark{
+        & #rate{
+            & #emoji{
+                position: relative;
+                display: flex;
+                font-size: 2.3rem;
+                justify-content: space-between;
+                margin-left: 160px;
+                width: 315px;
+            }
+            & #rating{
+                position: relative;
+                width: 300px;
+                &label{
+                    font-size: 1.5rem;
+                }
+                
+            }
+        }
+        & a{
+            padding: 2px 25px;
+            border-radius: 3px;
+            background-color: rgba(233, 100, 23, 0.979);
+            text-decoration: none;
+            color: #082b5c;
+        }
+        & input[type="submit"]{
+            padding: 2px 25px;
+            border-radius: 3px;
+            background-color: rgb(30, 211, 243);
+            color: #082b5c;
+            border: none;
         }
     }
 }
