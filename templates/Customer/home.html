@@ -97,9 +97,12 @@
             </div>
         
         </div>
-
+        <hr>
         <div class="row" id="s-history">
-            <h1>Service History</h1>
+            <h2>Service History</h2>
+            {% if requests==[] %}
+            <h5 style="color: #15628f;">No Past Service.</h5>
+            {% else %}
             <table class="table" style="color: #fff;">
                 <thead>
                   <tr>
@@ -133,6 +136,7 @@
                     {% endfor %}
                 </tbody>
               </table>
+              {% endif %}
         </div>
         
         {% endblock %}

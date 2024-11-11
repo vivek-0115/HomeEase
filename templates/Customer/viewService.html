@@ -19,13 +19,19 @@
     <h2>Best {{name}} Pakages</h2>
   </div>
   {% if services == [] %}
-  <div class="col-12"><h3>no pack</h3></div>
+  <div class="col-12"><h4>No Pack Available for {{name}}.</h4></div>
   {% else %}
   {% for service in services %}
   <div class="col-12">
     <div>
       <{{loop.index}}>  |
-      <p>{{service.description}} | only at {{service.price}}</p>
+      <p>{{service.name}} | {{service.description}} | only at {{service.price}} | 
+        {% if service.rating == 0 %}
+        No Rating Yet.
+        {% else %}
+        {{service.rating}} Rating
+        {% endif %}
+      </p>
       <a href="{{url_for('customer_serviceRequest',id=customer.id,name=name, srvs_id=service.id)}}">Book</a>
     </div>
   </div>
@@ -33,9 +39,12 @@
   {% endif %}
 </div>
 
-
+<hr>
 <div class="row" id="s-history">
-  <h1>Service History</h1>
+  <h2>Service History</h2>
+  {% if requests==[] %}
+  <h5 style="color: #15628f;">No Past Service.</h5>
+  {% else %}
   <table class="table" style="color: #fff;">
       <thead>
         <tr>
@@ -63,6 +72,7 @@
           {% endfor %}
       </tbody>
     </table>
+    {% endif %}
 </div>
 
 {% endblock %}

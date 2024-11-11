@@ -61,7 +61,21 @@
 
 {% block name_prof %}
 <h1>{{data.fname}} {{data.lname}}</h1>
-<h4>I'm Professional</h4>
+<h4>I'm 
+    {% if data.type == 'electrical' %}
+    Electrician
+    {% elif data.type == 'plumbing' %}
+    Plumber
+    {% elif data.type == 'gardening' %}
+    Gardener
+    {% elif data.type == 'Carpentry' %}
+    Carpenter
+    {% elif data.type == 'cleaning' %}
+    Cleaner
+    {% else %}
+    Some issue with Conditions.
+    {% endif %}
+</h4>
 {% endblock %}
 
 {% block rating %}

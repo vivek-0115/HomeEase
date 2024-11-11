@@ -59,8 +59,12 @@
         </div>
         {% else %}
         {% block main_content %}
-            <div class="row">
-                <h1>Todays's Services</h1>
+        <br>
+            <div class="row" id="request">
+                <h2>Todays's Services</h2>
+                {% if req_detail==[] %}
+                <h5 style="color: #15628f;">Not Any Service Request Yet.</h5>
+                {% else %}
                 <table class="table" style="color: #fff;">
                     <thead>
                       <tr>
@@ -88,10 +92,14 @@
                         {% endfor %}
                     </tbody>
                   </table>
+                  {% endif %}
             </div>
-
-            <div class="row">
-                <h1>Active Services</h1>
+            <br>
+            <div class="row" id="active">
+                <h2>Active Services</h2>
+                {% if active==[] %}
+                <h5 style="color: #15628f;">No Active Service.</h5>
+                {% else %}
                 <table class="table" style="color: #fff;">
                     <thead>
                       <tr>
@@ -116,10 +124,14 @@
                         {% endfor %}
                     </tbody>
                   </table>
+                  {% endif %}
             </div>
-
-            <div class="row">
-                <h1>Closed Services</h1>
+            <br>
+            <div class="row" id="closed">
+                <h2>Closed Services</h2>
+                {% if closed==[] %}
+                <h5 style="color: #15628f;">No Closed Service.</h5>
+                {% else %}
                 <table class="table" style="color: #fff;">
                     <thead>
                       <tr>
@@ -145,6 +157,7 @@
                         {% endfor %}
                     </tbody>
                   </table>
+                  {% endif %}
             </div>
         {% endblock %}
         {% endif %}

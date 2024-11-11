@@ -29,7 +29,7 @@ Admin Services
     <a href="{{url_for('create_service',id=admin.admin.id)}}">+ New Service</a>
 </div>
 {% if services == [] %}
-<h3>No Service Available</h3>
+<h4 style="color: #15628f;">No Service Available</h4>
 {% else %}
 <div>
     <table class="table" style="color: #fff;">
@@ -60,9 +60,12 @@ Admin Services
 </div>
 {% endif %}
 </div>
-
+<hr>
 <div class="row" id="service-request">
 <h1>Service Request</h1>
+{% if requests == [] %}
+<h4 style="color: #15628f;">No Requests</h4>
+{% else %}
 <table class="table" style="color: #fff;">
   <thead>
     <tr>
@@ -90,6 +93,7 @@ Admin Services
       {% endfor %}
   </tbody>
 </table>
+{% endif %}
 </div>
 
 {% endblock %}
