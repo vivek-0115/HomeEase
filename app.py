@@ -43,7 +43,7 @@ class User(db.Model,UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.datetime.now())
     active = db.Column(db.Boolean, default=True)
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False)
     
@@ -100,7 +100,7 @@ class Service(db.Model):
     price = db.Column(db.Numeric(10, 2), nullable=False)
     duration = db.Column(db.String(50), nullable=False)
     status = db.Column(db.String(20), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.datetime.now())
     rating = db.Column(db.Numeric(3,1), default=0)
     review_count = db.Column(db.Integer, default=0)
 
@@ -113,7 +113,7 @@ class ServiceRequest(db.Model):
     service_id = db.Column(db.Integer, db.ForeignKey('service.id'), nullable=False)
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
     professional_id = db.Column(db.Integer, db.ForeignKey('professional.id'), nullable=True)
-    date_of_request = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
+    date_of_request = db.Column(db.DateTime, default=datetime.datetime.now(), nullable=False)
     date_of_completion = db.Column(db.DateTime, nullable=True)
     service_status = db.Column(db.String(20), default='requested', nullable=False)
     remarks = db.Column(db.Text, nullable=True)
@@ -122,7 +122,7 @@ class RejectedService(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     professional_id = db.Column(db.Integer, db.ForeignKey('professional.id'), nullable=False)
     service_request_id = db.Column(db.Integer, db.ForeignKey('service_request.id'), nullable=False)
-    date_of_rejection = db.Column(db.DateTime, default=datetime.datetime.utcnow, nullable=False)
+    date_of_rejection = db.Column(db.DateTime, default=datetime.datetime.now(), nullable=False)
 
 class ServiceArea(db.Model):  
     id = db.Column(db.Integer, primary_key=True)
@@ -137,7 +137,7 @@ class Review(db.Model):
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
     stars = db.Column(db.Integer, nullable=False)
     remark = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)    
+    created_at = db.Column(db.DateTime, default=datetime.datetime.now())    
     
 with HomeEase.app_context():
     db_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'database.sqlite3')
@@ -683,7 +683,7 @@ def get_professional(id):
         "fname":professional.fname, "lname":professional.lname, "email":user_prof.email,
         "phone":professional.phone_no, "state":adrs.state, "city":adrs.city,"experience":professional.experience,
         "street":adrs.street, "zipcode":adrs.zipcode, "is_verified":professional.is_verified,
-        "picture":picture_base64, "mimetype":'image/png'
+        "picture":picture_base64, "mimetype":'image/png',"created_at":user_prof.created_at
     }
 
 @HomeEase.route('/HomeEase/professioinal/<int:id>/home')
@@ -1006,6 +1006,7 @@ def customer(id):
     cust_data = {
         "id":user_cust.id,
         "fname":customer.fname, "lname":customer.lname, "email":user_cust.email,
+        "created_at":user_cust.created_at,
         "phone":customer.phone_no, "state":adrs.state, "city":adrs.city,
         "street":adrs.street, "zipcode":adrs.zipcode,
         "picture":picture_base64, "mimetype":'image/png'
