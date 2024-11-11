@@ -132,6 +132,7 @@ class ServiceArea(db.Model):
 
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    request_id = db.Column(db.Integer, db.ForeignKey('service_request.id'), nullable=False)
     service_id = db.Column(db.Integer, db.ForeignKey('service.id'), nullable=False)
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
     stars = db.Column(db.Integer, nullable=False)
@@ -454,11 +455,11 @@ def manage_users(id):
     for user in User.query.filter_by(active=1).all():
         if user.role.name=='professional':
             prof = Professional.query.filter_by(user_id=user.id).first_or_404()
-            userData={"id":user.id, "fname":prof.fname, "lname":prof.fname, "email":user.email, "user_type":user.role.name}
+            userData={"id":user.id, "fname":prof.fname, "lname":prof.lname, "email":user.email, "user_type":user.role.name}
             active_list.append(userData)
         elif user.role.name == 'customer':
             cust = Customer.query.filter_by(user_id=user.id).first_or_404()
-            userData={"id":user.id, "fname":cust.fname, "lname":cust.fname, "email":user.email, "user_type":user.role.name}
+            userData={"id":user.id, "fname":cust.fname, "lname":cust.lname, "email":user.email, "user_type":user.role.name}
             active_list.append(userData)
 
     block_list = []
@@ -557,12 +558,13 @@ def services(id):
     for req in admin_requests:
         cust = Customer.query.filter_by(id=req.customer_id).first_or_404()
         srvs = Service.query.filter_by(id = req.service_id).first_or_404()
+        reviewed = Review.query.filter_by(request_id=req.id).first()
 
         if req.professional_id:
             prof = Professional.query.filter_by(id = req.professional_id).first_or_404()
-            admin_requests_data.append((req,srvs,prof,cust))
+            admin_requests_data.append((req,srvs,prof,cust,reviewed))
         else:
-            admin_requests_data.append((req,srvs,'',cust))
+            admin_requests_data.append((req,srvs,'',cust,reviewed))
 
     return render_template('/Admin/services.html',admin=get_admin(id), services=services, requests=admin_requests_data)
 
@@ -712,7 +714,10 @@ def professional_home(id):
                     active.append((cust, cust_addr, srvs, req))
 
                 elif req.service_status=='closed':
-                    closed.append((cust, cust_addr, srvs, req))
+                    reviewed = Review.query.filter_by(request_id=req.id).first()
+                    closed.append((cust, cust_addr, srvs, req, reviewed))
+                   
+                    
 
     
     return render_template('/Professional/home.html', professional=professional, 
@@ -748,6 +753,17 @@ def reject_request(id, request_id):
     db.session.commit()
 
     return redirect(url_for('professional_home', id=id))
+
+@HomeEase.route('/HomeEase/professioinal/<int:id>/home/close_service/<int:request_id>')
+@login_required
+def close_request(id, request_id):
+    service_req = ServiceRequest.query.filter_by(id=request_id).first_or_404()
+    service_req.service_status = 'closed'
+    service_req.date_of_completion = datetime.datetime.now()
+
+    db.session.add(service_req)
+    db.session.commit()
+    return redirect(url_for('professional_home',id=id))
 
 @HomeEase.route('/HomeEase/professioinal/<int:id>/search')
 @login_required
@@ -876,12 +892,16 @@ def get_request(id):
     
     if requests != []:
         for request in requests:
+            is_reviewd=False
             service = Service.query.filter_by(id = request.service_id).first_or_404()
+            reviewed = Review.query.filter_by(request_id=request.id).first()
+            if reviewed:
+                is_reviewd=True
             if request.professional_id:
                 prof = Professional.query.filter_by(id = request.professional_id).first_or_404()
-                request_data.append((request,service,prof,cust))
+                request_data.append((request,service,prof,cust,is_reviewd))
             else:
-                request_data.append((request,service,'',cust))
+                request_data.append((request,service,'',cust,is_reviewd))
         
         return request_data
     else:
@@ -918,8 +938,9 @@ def customer_review(id, req_id):
     service_req = ServiceRequest.query.filter_by(id=req_id).first_or_404()
     prof = Professional.query.filter_by(id=service_req.professional_id).first_or_404()
     service = Service.query.filter_by(id=service_req.service_id).first_or_404()
+    reviewed = Review.query.filter_by(request_id=req_id).first()
 
-    if service_req.service_status=='closed':
+    if reviewed:
         return "<h3>Review Already Submitted, please go back and refresh the page.</h3>"
     
     return render_template('/Customer/review.html', customer=get_customer(id), 
@@ -936,10 +957,12 @@ def submit_review(id, req_id):
         remark = request.form.get('remark')
         
         if remark == "":
-            review = Review(service_id=service.id, customer_id=cust.id, stars=star)
+            review = Review(request_id=req_id, service_id=service.id, customer_id=cust.id, stars=star)
         else:
-            review = Review(service_id=service.id, customer_id=cust.id, stars=star, remark=remark.strip())
+            review = Review(request_id=req_id, service_id=service.id, customer_id=cust.id, stars=star, remark=remark.strip())
+
         db.session.add(review)
+
         service_req.service_status = 'closed'
         service_req.date_of_completion = datetime.datetime.now()
 
