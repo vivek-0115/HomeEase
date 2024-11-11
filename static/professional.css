@@ -166,6 +166,17 @@ table{
     }
 }
 
+#active, #closed, #request{
+    padding: 10px;
+    background-color: #022352;
+    border-radius: 10px;
+    box-shadow: 1px 3px 15px rgba(0, 0, 0, 0.3);
+
+    & h2{
+        color: 	#7393B3;
+    }
+}
+
 th, td {
     padding: 12px;
     text-align: left;

@@ -93,6 +93,18 @@ body{
         }
     }
 }
+
+#s-history{
+    padding: 10px;
+    background-color: #022352;
+    border-radius: 10px;
+    box-shadow: 1px 3px 15px rgba(0, 0, 0, 0.3);
+
+    & h2{
+        color: 	#7393B3;
+    }
+}
+
 table{
     padding: 10px;
 
