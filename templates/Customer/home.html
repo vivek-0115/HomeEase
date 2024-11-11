@@ -111,10 +111,11 @@
                     <th>Professional Name</th>
                     <th>Phone Number</th>
                     <th>Status</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                    {% for request,service,prof,_ in requests %}
+                    {% for request,service,prof,_,reviewed in requests %}
                     <tr>
                         <td>{{request.id}}</td>
                         <td>{{service.name}}</td>
@@ -125,13 +126,23 @@
                         <td>{{prof.fname}} {{prof.lname}}</td>
                         <td>{{prof.phone_no}}</td>
                         {% endif %}
-                        {% if request.service_status == 'accepted' %}
-                        <td>
-                            <a href="{{url_for('customer_review',id=customer.id, req_id=request.id)}}">close it?</a>
-                        </td>
-                        {% else %}
+                        
                         <td style="text-transform: capitalize;">{{request.service_status}}</td>
-                        {% endif %}
+                        <td>
+                            {% if request.service_status == 'accepted' %}
+                            <a href="{{url_for('customer_review',id=customer.id, req_id=request.id)}}" style="color: #041E42;" >Review & Close it?</a>
+                            {% elif request.service_status == 'closed' %}
+                            <a href="" style="cursor: not-allowed;background-color: rgb(40, 102, 40);color: #41856b;">closed</a>
+                                {% if reviewed %}
+                                 & <a href="" style="cursor: not-allowed;background-color: rgb(40, 102, 40);color: #41856b;">Reviewed</a>
+                                {% else %}
+                                <a href="{{url_for('customer_review',id=customer.id, req_id=request.id)}}" style="background-color: #1da1f2;color: #041E42;">Review</a>
+                                {% endif %}
+                            {% else %}
+                            <a href="" style="cursor: not-allowed;background-color: rgb(40, 102, 40);color: #41856b;">Review & Close it?</a>
+                            {% endif %}
+
+                        </td>  
                     </tr>
                     {% endfor %}
                 </tbody>

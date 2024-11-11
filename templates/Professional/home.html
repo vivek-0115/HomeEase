@@ -22,7 +22,7 @@
                         <a href="{{url_for('professional_home',id=professional.id)}}" id="current-link">Home</a>
                         <a href="{{url_for('professional_search',id=professional.id)}}" class="link">Search</a>
                         <a href="{{url_for('professional_summary',id=professional.id)}}" class="link">Summary</a>
-                        <a href="{{url_for('professional_profile',id=professional.id)}}" id="link">Profile</a>
+                        <a href="{{url_for('professional_profile',id=professional.id)}}" class="link">Profile</a>
                         <a href="{{url_for('logout')}}" class="link">Logout</a>
                     {% else %}
                         <a href="{{url_for('professional_home',id=professional.id)}}" id="current-link">Home</a>
@@ -109,6 +109,7 @@
                         <th>Phone Number</th>
                         <th>Location</th>
                         <th>Status</th>
+                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -120,6 +121,9 @@
                                 <td>{{cust.phone_no}}</td>
                                 <td>{{addr.state}}, {{addr.city}}, {{addr.zipcode}}</td>
                                 <td style="text-transform: capitalize;">{{req.service_status}}</td>
+                                <td>
+                                    <a href="{{url_for('close_request',id=professional.id, request_id=req.id)}}">close it?</a>
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -134,25 +138,37 @@
                 {% else %}
                 <table class="table" style="color: #fff;">
                     <thead>
-                      <tr>
+                      <tr style="font-size: 0.9rem;">
                         <th>Req.ID</th>
                         <th>Service Name(& id)</th>
                         <th>Customer Name</th>
                         <th>Phone Number</th>
                         <th>Location</th>
                         <th>Date</th>
+                        <th>Status</th>
                         <th>Rating</th>
                       </tr>
                     </thead>
                     <tbody>
-                        {% for cust,addr,srvs, req in closed %}
-                            <tr>
+                        {% for cust,addr,srvs, req, reviewed in closed %}
+                            <tr style="font-size: 0.9rem;">
                                 <td>{{req.id}}</td>
                                 <td>{{srvs.id}}. {{srvs.name}}</td>
                                 <td>{{cust.fname}}{{cust.lname}}</td>
                                 <td>{{cust.phone_no}}</td>
                                 <td>{{addr.state}}, {{addr.city}}, {{addr.zipcode}}</td>
+                                <td >
+                                    {{req.date_of_completion.strftime("%d-%m-%Y")}}
+                                    at {{ req.date_of_completion.strftime("%H:%M") }}
+                                </td>
                                 <td style="text-transform: capitalize;">{{req.service_status}}</td>
+                                <td>
+                                    {% if reviewed %}
+                                    {{reviewed.stars}}
+                                    {% else %}
+                                    <span style="font-size: 0.8rem;">No review yet</span>
+                                    {% endif %}
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>

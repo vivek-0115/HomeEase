@@ -37,8 +37,10 @@ Admin Services
           <tr>
             <th>ID</th>
             <th>Name</th>
+            <th>Description</th>
             <th>Price</th>
-            <th>Price</th>
+            <th>Sr. Type</th>
+            <th>Rating</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -47,8 +49,10 @@ Admin Services
           <tr>
             <td><a style="background-color: #034870;" href="">{{service.id}}</a></td>
             <td>{{service.name}}</td>
+            <td>{{service.description}}</td>
             <td>Rs. {{service.price}}</td>
-            <td>{{service.category}}</td>
+            <td style="text-transform: capitalize;">{{service.category}}</td>
+            <td>{{service.rating}}</td>
             <td>
               <a style="background-color: rgb(14, 162, 231);" href="{{url_for('edit_service',id=admin.admin.id, srvs_id=service.id)}}">Edit</a>
               <a style="background-color: red;" href="{{url_for('delete_service',id=admin.admin.id, srvs_id=service.id)}}">Delete</a>
@@ -71,24 +75,41 @@ Admin Services
     <tr>
       <th>Req.ID</th>
       <th>Service Name</th>
-      <th>Professional Name</th>
-      <th>Phone Number</th>
+      <th style="font-size: 1rem;">Prof. Name(& ID)</th>
+      <th>Prof. Phone</th>
+      <th style="font-size: 1rem;">Cust. Name(& ID)</th>
+      <th>Cust. Phone</th>
       <th>Status</th>
     </tr>
   </thead>
   <tbody>
-      {% for request,service,prof,cust in requests %}
+      {% for request,service,prof,cust,reviewed in requests %}
       <tr>
           <td>{{request.id}}</td>
           <td>{{service.name}}</td>
           {% if prof=='' %}
           <td></td>
           <td></td>
+          <td>{{cust.fname}} {{cust.lname}}</td>
+          <td>{{cust.phone_no}}</td>
           {% else %}
           <td>{{prof.fname}} {{prof.lname}}</td>
           <td>{{prof.phone_no}}</td>
+          <td>{{cust.fname}} {{cust.lname}}</td>
+          <td>{{cust.phone_no}}</td>
           {% endif %}
-          <td>{{request.service_status}}</td>
+          <td style="text-transform: capitalize;">
+            {% if request.service_status=='closed' %}
+              {{request.service_status}} & 
+              {% if reviewed %}
+              Reviewed
+              {% else %}
+              No Review
+              {% endif %}
+            {% else %}
+            {{request.service_status}}
+            {% endif %}
+          </td>
       </tr>
       {% endfor %}
   </tbody>
