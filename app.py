@@ -159,7 +159,7 @@ with HomeEase.app_context():
                 hashed_password = generate_password_hash('vivek')
             
                 admin_user = User(
-                email='admin@mail.com',
+                email='admin@gmail.com',
                 password=hashed_password,
                 role_id=admin_role.id
                 )
