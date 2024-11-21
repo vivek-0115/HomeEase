@@ -154,9 +154,9 @@ with HomeEase.app_context():
             print("Three Main Roles Are Created")
 
             admin_role = Role.query.filter_by(name='admin').first()
-            if admin_role and not User.query.filter_by(email='admin@mail.com').first():
+            if admin_role and not User.query.filter_by(email='admin@gmail.com').first():
 
-                hashed_password = generate_password_hash('admin')
+                hashed_password = generate_password_hash('vivek')
             
                 admin_user = User(
                 email='admin@mail.com',
@@ -165,7 +165,7 @@ with HomeEase.app_context():
                 )
                 db.session.add(admin_user)
                 db.session.commit()
-                print("Admin user created with email: admin@mail.com")
+                print("Admin user created with email: admin@gmail.com")
 
                 admin_details = Admin(
                 user_id=admin_user.id,
@@ -664,7 +664,34 @@ def edit_service(id, srvs_id):
 @HomeEase.route('/HomeEase/admin/<int:id>/delete_service/<int:srvs_id>', methods=['GET', 'POST'])
 @login_required
 def delete_service(id, srvs_id):
-    return '<h2> Delete function not Created yet.'
+
+    service=Service.query.filter_by(id=srvs_id).first_or_404()
+    service_area=ServiceAreaAssociation.query.filter_by(service_id=srvs_id).all()
+
+    review=Review.query.filter_by(service_id=srvs_id).all()
+
+    service_request=ServiceRequest.query.filter_by(service_id=srvs_id).all()
+
+    for req in service_request:
+        reject=RejectedService.query.filter_by(service_request_id=req.id).all()
+        for obj in reject:
+            db.session.delete(obj)
+
+    for obj in service_area:
+        db.session.delete(obj)
+
+    for obj in review:
+        db.session.delete(obj)
+
+    for obj in service_request:
+        db.session.delete(obj)
+
+    db.session.delete(service)
+    db.session.commit()
+
+    flash('Service had been deleted!','warning')
+
+    return redirect(url_for('services',id=id))
 #==================End Of Admin Control===========================#
 
 
@@ -1079,7 +1106,7 @@ def customer_search(id):
 
         else:
             return render_template('/Customer/search.html', customer=get_customer(id), results=results)
-            
+
     return render_template('/Customer/search.html', customer=get_customer(id), results='')
 
 @HomeEase.route('/HomeEase/customer/<int:id>/summary')
