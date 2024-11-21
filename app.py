@@ -3,13 +3,14 @@
 from flask import Flask, render_template, redirect, url_for, request, flash, abort, Response
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
-import datetime
+from datetime import datetime
+from sqlalchemy import func
 import base64
 import os,io
 import fitz
-import datetime
-from werkzeug.utils import secure_filename
+
 
 
 #==================Initialising App Component===========================#
@@ -43,7 +44,7 @@ class User(db.Model,UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.now())
+    created_at = db.Column(db.DateTime, default=datetime.now())
     active = db.Column(db.Boolean, default=True)
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False)
     
@@ -100,7 +101,7 @@ class Service(db.Model):
     price = db.Column(db.Numeric(10, 2), nullable=False)
     duration = db.Column(db.String(50), nullable=False)
     status = db.Column(db.String(20), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.now())
+    created_at = db.Column(db.DateTime, default=datetime.now())
     rating = db.Column(db.Numeric(3,1), default=0)
     review_count = db.Column(db.Integer, default=0)
 
@@ -113,7 +114,7 @@ class ServiceRequest(db.Model):
     service_id = db.Column(db.Integer, db.ForeignKey('service.id'), nullable=False)
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
     professional_id = db.Column(db.Integer, db.ForeignKey('professional.id'), nullable=True)
-    date_of_request = db.Column(db.DateTime, default=datetime.datetime.now(), nullable=False)
+    date_of_request = db.Column(db.DateTime, default=datetime.now(), nullable=False)
     date_of_completion = db.Column(db.DateTime, nullable=True)
     service_status = db.Column(db.String(20), default='requested', nullable=False)
     remarks = db.Column(db.Text, nullable=True)
@@ -122,7 +123,7 @@ class RejectedService(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     professional_id = db.Column(db.Integer, db.ForeignKey('professional.id'), nullable=False)
     service_request_id = db.Column(db.Integer, db.ForeignKey('service_request.id'), nullable=False)
-    date_of_rejection = db.Column(db.DateTime, default=datetime.datetime.now(), nullable=False)
+    date_of_rejection = db.Column(db.DateTime, default=datetime.now(), nullable=False)
 
 class ServiceArea(db.Model):  
     id = db.Column(db.Integer, primary_key=True)
@@ -137,7 +138,7 @@ class Review(db.Model):
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
     stars = db.Column(db.Integer, nullable=False)
     remark = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.now())    
+    created_at = db.Column(db.DateTime, default=datetime.now())    
     
 with HomeEase.app_context():
     db_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'database.sqlite3')
@@ -234,7 +235,7 @@ def join_cust():
         state = request.form.get('state').strip().lower()
         city = request.form.get('city').strip().lower()
         street = request.form.get('street').strip().lower()
-        zipcode = request.form.get('zipcode')
+        zipcode = request.form.get('zipcode').strip()
 
         phone = request.form.get('phone')
         password = request.form.get('password')
@@ -284,10 +285,10 @@ def join_prof():
         lname = request.form.get('lname')
         email = request.form.get('email')
 
-        state = request.form.get('state')
-        city = request.form.get('city')
-        street = request.form.get('street')
-        zipcode = request.form.get('zipcode')
+        state = request.form.get('state').strip().lower()
+        city = request.form.get('city').strip().lower()
+        street = request.form.get('street').strip().lower()
+        zipcode = request.form.get('zipcode').strip()
 
         service_type = request.form.get('services')
         resume = request.files['resume']
@@ -765,7 +766,7 @@ def close_request(id, request_id):
     db.session.commit()
     return redirect(url_for('professional_home',id=id))
 
-@HomeEase.route('/HomeEase/professioinal/<int:id>/search')
+@HomeEase.route('/HomeEase/professioinal/<int:id>/search', methods=['GET', 'POST'])
 @login_required
 def professional_search(id):
     
@@ -774,7 +775,67 @@ def professional_search(id):
     if not professional['is_verified']:
         return abort(403)
 
-    return render_template('/Professional/search.html', professional=professional)
+    if request.method=='POST':
+        results=[]
+        search_by=request.form.get('search_by')
+        search_name=request.form.get('search_name').strip().lower()
+
+        if search_by=='date':
+            query_date = datetime.strptime(search_name, '%d/%m/%y').date()
+            s_req=ServiceRequest.query.filter(func.date(ServiceRequest.date_of_request) == query_date,
+                                                            ServiceRequest.service_status == 'requested').all()
+            for req in s_req:
+                srvs=Service.query.filter_by(id=req.service_id).first_or_404()
+                cust=Customer.query.filter_by(id=req.customer_id).first_or_404()
+                addr=Address.query.filter_by(user_id=cust.user_id).first_or_404()
+
+                if srvs.category.strip().lower()==professional['type'].strip().lower():
+                    results.append((req,srvs,cust,addr))
+            return render_template('/Professional/search.html', professional=professional, results=results)
+
+        elif search_by=='state':
+            addr=Address.query.filter_by(state=search_name).all()
+            for adr in addr:
+                user=adr.user
+                cust=Customer.query.filter_by(user_id=user.id).first()
+                if cust:
+                    req_all=ServiceRequest.query.filter_by(customer_id=cust.id, service_status = 'requested').all()
+                    for req in req_all:
+                        srvs=Service.query.filter_by(id=req.service_id).first_or_404()
+                        if srvs.category.strip().lower()==professional['type'].strip().lower():
+                            results.append((req,srvs,cust,adr))
+            print(results)
+            return render_template('/Professional/search.html', professional=professional, results=results)
+
+        elif search_by=='city':
+            addr=Address.query.filter_by(city=search_name).all()
+            for adr in addr:
+                user=adr.user
+                cust=Customer.query.filter_by(user_id=user.id).first()
+                if cust:
+                    req_all=ServiceRequest.query.filter_by(customer_id=cust.id, service_status = 'requested').all()
+                    for req in req_all:
+                        srvs=Service.query.filter_by(id=req.service_id).first_or_404()
+                        if srvs.category.strip().lower()==professional['type'].strip().lower():
+                            results.append((req,srvs,cust,adr))
+            return render_template('/Professional/search.html', professional=professional, results=results)
+
+        elif search_by=='zipcode':
+            addr=Address.query.filter_by(zipcode=search_name).all()
+            for adr in addr:
+                user=adr.user
+                cust=Customer.query.filter_by(user_id=user.id).first()
+                if cust:
+                    req_all=ServiceRequest.query.filter_by(customer_id=cust.id, service_status = 'requested').all()
+                    for req in req_all:
+                        srvs=Service.query.filter_by(id=req.service_id).first_or_404()
+                        if srvs.category.strip().lower()==professional['type'].strip().lower():
+                            results.append((req,srvs,cust,adr))
+            return render_template('/Professional/search.html', professional=professional, results=results)
+        else:
+            return render_template('/Professional/search.html', professional=professional, results=results)
+
+    return render_template('/Professional/search.html', professional=professional, results='')
 
 @HomeEase.route('/HomeEase/professioinal/<int:id>/summary')
 @login_required
@@ -923,9 +984,7 @@ def customer_viewService(id, name):
 @HomeEase.route('/HomeEase/customer/<int:id>/<string:name>/<int:srvs_id>/request')
 @login_required
 def customer_serviceRequest(id, name, srvs_id):
-    print(name, 'Booked', srvs_id)
     cust=Customer.query.filter_by(user_id=id).first_or_404()
-    print(cust)
     request = ServiceRequest(service_id=srvs_id, customer_id=cust.id)
     
     db.session.add(request)
@@ -981,10 +1040,47 @@ def submit_review(id, req_id):
 
     return redirect(url_for('customer_home', id=id))
 
-@HomeEase.route('/HomeEase/customer/<int:id>/search')
+@HomeEase.route('/HomeEase/customer/<int:id>/search', methods=['GET', 'POST'])
 @login_required
 def customer_search(id):
-    return render_template('/Customer/search.html', customer=get_customer(id))
+    if request.method=='POST':
+        results=[]
+        search_by=request.form.get('search_by')
+        search_name=request.form.get('search_name').strip().lower()
+
+        if search_by=='service name':
+            all_service=Service.query.all()
+            for service in all_service:
+                name=service.name.lower()
+                if search_name in name or name in search_name or name==search_name:
+                    results.append(service)
+            return render_template('/Customer/search.html', customer=get_customer(id), results=results)
+
+        elif search_by=='state':
+            areas=ServiceArea.query.filter_by(state=search_name).all()
+            for area in areas:
+                service=area.services
+                results.extend(service)
+            return render_template('/Customer/search.html', customer=get_customer(id), results=results)
+
+        elif search_by=='city':
+            areas=ServiceArea.query.filter_by(city=search_name).all()
+            for area in areas:
+                service=area.services
+                results.extend(service)
+            return render_template('/Customer/search.html', customer=get_customer(id), results=results)  
+
+        elif search_by=='zipcode':
+            areas=ServiceArea.query.filter_by(zipcode=search_name).all()
+            for area in areas:
+                service=area.services
+                results.extend(service)
+            return render_template('/Customer/search.html', customer=get_customer(id), results=results)
+
+        else:
+            return render_template('/Customer/search.html', customer=get_customer(id), results=results)
+            
+    return render_template('/Customer/search.html', customer=get_customer(id), results='')
 
 @HomeEase.route('/HomeEase/customer/<int:id>/summary')
 @login_required
