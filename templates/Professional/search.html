@@ -9,5 +9,64 @@
 {% endblock %}
 
 {% block main_content %}
-            <h1>search</h1>
-        {% endblock %}
+<br><br>
+<div class="row" style="display: flex;justify-content: end;">
+    <div style="width: 50%;">
+        <form action="{{url_for('professional_search',id=professional.id)}}" method="post">
+            <label for="">
+                Search By: 
+            </label>
+            <div style="display: inline-block;">
+                <select name="search_by" class="rounded" required>
+                    <option value="" disabled selected></option>
+                    <option value="date">Date</option>
+                    <option value="state">State</option>
+                    <option value="city">City</option>
+                    <option value="zipcode">Zipcode</option>
+                </select> 
+                <input type="search" class="rounded" name="search_name" placeholder="search" required>
+                <input type="submit" value="search">
+            </div>
+        </form>
+    </div>
+</div>
+
+<hr>
+
+<div class="row" id="active">
+    {% if results=='' %}
+    <h3>Search result shown here.</h3>
+    {% else %}
+    {% if results==[] %}
+    <h2>Your Search Results</h2>
+    <h5 style="color: #15628f;">No Results Founds.</h5>
+    {% else %}
+    <h2>Your Search Results</h2>
+    <table class="table" style="color: #fff;">
+        <thead>
+          <tr>
+            <th>Req.ID</th>
+            <th>Service Name(& id)</th>
+            <th>Customer Name</th>
+            <th>Phone Number</th>
+            <th>Location</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for req,srvs,cust,addr in results %}
+            <tr>
+                <td>{{req.id}}</td>
+                <td>{{srvs.id}}. {{srvs.name}}</td>
+                <td>{{cust.fname}}{{cust.lname}}</td>
+                <td>{{cust.phone_no}}</td>
+                <td>{{addr.sate}} {{addr.city}} {{addr.zipcode}}</td>
+                <td>{{srvs.status}}</td>
+            </tr> 
+            {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+      {% endif %}
+</div>
+{% endblock %}
