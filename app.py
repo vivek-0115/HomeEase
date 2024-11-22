@@ -281,9 +281,9 @@ def join_cust():
 @HomeEase.route("/home/join/professional_registration", methods=['GET', 'POST'])
 def join_prof():
     if request.method == 'POST':
-        fname = request.form.get('fname')
-        lname = request.form.get('lname')
-        email = request.form.get('email')
+        fname = request.form.get('fname').strip()
+        lname = request.form.get('lname').strip()
+        email = request.form.get('email').strip()
 
         state = request.form.get('state').strip().lower()
         city = request.form.get('city').strip().lower()
