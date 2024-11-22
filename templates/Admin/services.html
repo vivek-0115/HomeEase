@@ -49,10 +49,10 @@ Admin Services
           <tr>
             <td><a style="background-color: #034870;" href="">{{service.id}}</a></td>
             <td>{{service.name}}</td>
-            <td>{{service.description}}</td>
-            <td>Rs. {{service.price}}</td>
+            <td style="font-size: 14px;">{{service.description}}</td>
+            <td style="font-size: 14px;">Rs. {{service.price}}</td>
             <td style="text-transform: capitalize;">{{service.category}}</td>
-            <td>{{service.rating}}</td>
+            <td style="font-size: 14px;">{{service.rating}}</td>
             <td>
               <a style="background-color: rgb(14, 162, 231);" href="{{url_for('edit_service',id=admin.admin.id, srvs_id=service.id)}}">Edit</a>
               <a style="background-color: red;" href="{{url_for('delete_service',id=admin.admin.id, srvs_id=service.id)}}">Delete</a>
