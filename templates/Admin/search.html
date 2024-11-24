@@ -1,0 +1,121 @@
+{% extends "/Admin/home.html" %}
+
+{% block title %}
+Admin Search
+{% endblock %}
+
+{% block nav %}
+<a href="{{url_for('admin_home',id=admin.admin.id)}}" class="link">Home</a>
+<a href="{{url_for('admin_search',id=admin.admin.id)}}" id="current-link">Search</a>
+<a href="{{url_for('services',id=admin.admin.id)}}" class="link">Services</a>
+<a href="{{url_for('manage_users',id=admin.admin.id)}}" class="link">Users</a>
+<a href="{{url_for('admin_profile',id=admin.admin.id)}}" class="link">Profile</a>
+<a href="{{url_for('logout')}}" class="link">Logout</a>
+{% endblock %}
+
+{% block main_content %}
+
+<br>
+<hr>
+<div class="row" style="display: flex;justify-content: end;">
+    <div style="width: 50%;">
+        <form action="{{url_for('admin_search', id=admin.admin.id)}}" method="post">
+            <label style="font-weight: 600;">
+                Search By: 
+            </label>
+            <div style="display: inline-block;">
+                <select name="search_by" class="rounded" required>
+                    <option value="" disabled selected></option>
+                    <option value="professional">Professional</option>
+                    <option value="customer">Customer</option>
+                    <option value="service">Service</option>
+                </select> 
+                <input type="search" class="rounded" name="search_name" placeholder="search" required>
+                <input type="submit" value="search">
+            </div>
+        </form>
+    </div>
+</div>
+
+<hr>
+
+<div class="row" id="activeTable">
+    <h2>Your Search Result</h2>
+    {% if actives=='' %}
+    <h5>Result are shown here.</h5>
+    {% else %}
+    {% if actives | length != 0 %}
+    <table class="table" style="color: #fff;">
+      {% if msg!='service' %}
+        <thead>
+          <tr>
+            <th>SNo.</th>
+            <th>UserID</th>
+            <th>Name</th>
+            <th>UserType</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user,active in actives %}
+          <tr>
+            <th>{{loop.index}}</th>
+            <td>{{active.id}}</td>
+            <td>{{active.fname}} {{active.lname}}</td>
+            <td>{{user.role.name}}</td>
+            <td>{{user.email}}</td>
+            {% if user.active %}
+            <td>Active</td>
+            <td>
+              <a href="{{url_for('block_user',id=admin.admin.id,user_id=user.id)}}" style="background-color: #f44336;">Block</a> 
+              <a href="{{url_for('view_user',id=admin.admin.id,user_id=user.id)}}" style="background-color: #1da1f2;">View</a></td>
+          </tr>
+          {% else %}
+          <td>Inactive</td>
+          <td><a href="{{url_for('unblock_user',id=admin.admin.id,user_id=user.id)}}" style="background-color: #45e24a;">Unblock</a>
+            <a href="{{url_for('view_user',id=admin.admin.id,user_id=user.id)}}" style="background-color: #1da1f2;">View</a></td>
+          </td>
+          {% endif %}
+          {% endfor %}
+        </tbody>
+        {% else %}
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Sr. Type</th>
+            <th>Rating</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for service in actives %}
+          <tr>
+            <td><a style="background-color: #034870;" href="">{{service.id}}</a></td>
+            <td>{{service.name}}</td>
+            <td style="font-size: 14px;">{{service.description}}</td>
+            <td style="font-size: 14px;">Rs. {{service.price}}</td>
+            <td style="text-transform: capitalize;">{{service.category}}</td>
+            <td style="font-size: 14px;">{{service.rating}}</td>
+            <td>
+              <a style="background-color: rgb(14, 162, 231);" href="{{url_for('edit_service',id=admin.admin.id, srvs_id=service.id)}}">Edit</a>
+              <a style="background-color: red;" href="{{url_for('delete_service',id=admin.admin.id, srvs_id=service.id)}}">Delete</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        {% endif %}
+      </table>
+      {% else %}
+      <h5>No result found.</h5>
+      {% endif %}
+      {% endif %}
+</div>
+
+<hr>
+
+{% endblock %}

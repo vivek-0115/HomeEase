@@ -237,6 +237,19 @@ th, td {
     }
 }
 
+#information{
+    & .col div{
+        border: 2px solid #285088;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #022352;
+
+        & h5{
+            text-align: center;
+        }
+    }
+}
+
 @media (max-width: 576px) { /* For small devices like phones */
     #nav {
         display: flex;

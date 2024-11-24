@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="/static/admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
@@ -23,6 +24,7 @@
             <div class="col-sm-6" id="link">
                 {% block nav %}
                 <a href="{{url_for('admin_home',id=admin.admin.id)}}" id="current-link">Home</a>
+                <a href="{{url_for('admin_search',id=admin.admin.id)}}" class="link">Search</a>
                 <a href="{{url_for('services',id=admin.admin.id)}}" class="link">Services</a>
                 <a href="{{url_for('manage_users',id=admin.admin.id)}}" class="link">Users</a>
                 <a href="{{url_for('admin_profile',id=admin.admin.id)}}" class="link">Profile</a>
@@ -51,8 +53,211 @@
 
         {% block main_content %}
 
+        <hr>
+        <br>
+        <div class="row" id="information">
+          <div class="col">
+            <div>
+              <h5>Users</h5>
+              <hr>
+              <p>Total Users: {{infor['Users']['total']['user']}}</p>
+              <p>Blocked Users: {{infor['Users']['total']['block']}}</p>
+            </div>
+          </div>
+          <div class="col">
+            <div>
+              <h5>Professional</h5>
+              <hr>
+              <p>Total Professionals: {{infor['Users']['professional']['user']}}</p>
+              <p>Blocked Professionals: {{infor['Users']['professional']['block']}}</p>
+            </div>
+          </div>
+          <div class="col">
+            <div>
+              <h5>Customer</h5>
+              <hr>
+              <p>Total Professionals: {{infor['Users']['customer']['user']}}</p>
+              <p>Blocked Professionals: {{infor['Users']['customer']['block']}}</p>
+            </div>
+          </div>
+          <div class="col">
+            <div>
+              <h5>Services</h5>
+              <hr>
+              <p>Total Service: {{infor['Services']['total']}}</p>
+            </div>
+          </div>
+        </div>
+        <br>
+        
+        <hr>
+        <br>
+
+        <div class="row" >
+          <div class="col">
+            <canvas id="myChart" height="300"></canvas>
+          </div>
+          <div class="col" >
+            <canvas id="myService" height="100"></canvas>
+          </div>
+        </div>
+        <br>
+        <hr>
+        <br>
+        <div class="row">
+          <div class="col">
+            <canvas id="myinfo"></canvas>
+          </div>
+        </div>
+        <div id="chart-data" style="display:none;">{{ infor | tojson }}</div>
+
         {% endblock %}
 
     </div>
+
+
+    <script>
+      const ctx = document.getElementById('myChart');
+
+      const service = document.getElementById('myService');
+
+      const info = document.getElementById('myinfo');
+
+      const dataDiv = document.getElementById('chart-data');
+      const data = JSON.parse(dataDiv.textContent.trim());
+
+
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Total Users', 'Total Customers', 'Total Professionals', 'Total Blocked'],
+          datasets: [{
+            label: 'User Distribution',
+            data: [
+              data['Users']['total']['user'],
+              data['Users']['customer']['user'],
+              data['Users']['professional']['user'],
+              data['Users']['total']['block']
+            ],
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(255, 159, 64, 0.2)',
+              'rgba(54, 162, 235, 0.2)',
+              'rgba(153, 102, 255, 0.2)',
+
+            ],
+            borderColor: [
+              'rgb(255, 99, 132)',
+              'rgb(255, 159, 64)',
+              'rgb(54, 162, 235)',
+              'rgb(153, 102, 255)',
+
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+ 
+      new Chart(service, {
+        type: 'doughnut',
+        data: {
+          labels: ['Electical', 'Carpentry', 'Plumbing', 'Cleaning', 'Gardening'],
+          datasets: [{
+            label: 'My First Dataset', 
+            data: [
+              data['Services']['electrical']/data['Services']['total'],
+              data['Services']['electrical']/data['Services']['total'],
+              data['Services']['electrical']/data['Services']['total'],
+              data['Services']['electrical']/data['Services']['total'],
+              data['Services']['electrical']/data['Services']['total'],
+            ], 
+            backgroundColor: [
+            'rgb(255, 99, 132)',
+      'rgb(75, 192, 192)',
+      'rgb(255, 205, 86)',
+      'rgb(201, 203, 207)',
+      'rgb(54, 162, 235)'
+            ],
+            hoverOffset: 4 
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top', 
+            },
+            title: {
+                    display: true,
+                    text: 'Service distribution by Category'
+                }
+          }
+        }
+      });
+
+      new Chart(info, {
+                type: 'polarArea',
+                data: {
+                  labels: [
+    'Total User',
+    'Blocked User',
+    'Total Customer',
+    'Blocked Customer',
+    'Total Professional',
+    'Blocked Professional'
+  ],
+                    datasets: [{
+                        label: 'Dataset 1', // Chart legend label
+                        data: [15, 28, 42, 7, 34, 19], // Data values
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)', // Red
+                            'rgba(54, 162, 235, 0.2)', // Blue
+                            'rgba(255, 206, 86, 0.2)', // Yellow
+                            'rgba(75, 192, 192, 0.2)', // Green
+                            'rgba(153, 102, 255, 0.2)', // Purple
+                            'rgba(255, 159, 64, 0.2)'  // Orange
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)', // Red
+                            'rgba(54, 162, 235, 1)', // Blue
+                            'rgba(255, 206, 86, 1)', // Yellow
+                            'rgba(75, 192, 192, 1)', // Green
+                            'rgba(153, 102, 255, 1)', // Purple
+                            'rgba(255, 159, 64, 1)'  // Orange
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top', // Legend position
+                        },
+                    },
+                    scales: {
+                r: { // Radial scale configuration
+                    grid: {
+                        display: false, // Hide radial grid lines
+                    },
+                    ticks: {
+                        display: false, // Hide radial ticks
+                    }
+                }
+            }
+                }
+            });
+            
+      
+    </script>
 </body>
 </html>
