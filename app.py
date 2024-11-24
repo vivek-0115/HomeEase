@@ -206,7 +206,7 @@ def login():
                 if role_name == 'admin':
                     return redirect(url_for('admin_home', id=user.id))
                 elif role_name == 'customer':
-                    return redirect(url_for('customer', id=user.id))
+                    return redirect(url_for('customer_home', id=user.id))
                 elif role_name == 'professional':
                     return redirect(url_for('professional_home', id=user.id))
 
@@ -370,7 +370,89 @@ def get_admin(id):
 @HomeEase.route('/HomeEase/admin/<int:id>/home')
 @login_required
 def admin_home(id):
-    return render_template("/Admin/home.html", admin=get_admin(id))
+
+    all_users=User.query.all()
+    blocked_users=User.query.filter_by(active=0).all()
+
+    all_cust=User.query.filter_by(role_id=2).all()
+    blocked_cust=User.query.filter_by(role_id=2,active=0).all()
+
+    all_prof=User.query.filter_by(role_id=3).all()
+    blocked_prof=User.query.filter_by(role_id=3,active=0).all()
+
+    all_service=Service.query.all()
+
+    cleaning=Service.query.filter_by(category="cleaning").all()
+    gardening=Service.query.filter_by(category="gardening").all()
+    plumbing=Service.query.filter_by(category="plumbing").all()
+    carpentry=Service.query.filter_by(category="carpentry").all()
+    electrical=Service.query.filter_by(category="electrical").all()
+
+    infor={
+        "Users":{
+            "total":{
+                "user":len(all_users)-1,
+                "block":len(blocked_users)
+            },
+            "customer":{
+                "user":len(all_cust),
+                "block":len(blocked_cust)
+            },
+            "professional":{
+                "user":len(all_prof),
+                "block":len(blocked_prof)
+            }
+        },
+        "Services":{
+            "total":len(all_service),
+            "electrical":len(electrical),
+            "carpentry":len(carpentry),
+            "cleaning":len(cleaning),
+            "gardening":len(gardening),
+            "plumbing":len(plumbing)
+        }
+    }
+
+    return render_template("/Admin/home.html", admin=get_admin(id), infor=infor)
+
+@HomeEase.route('/HomeEase/admin/<int:id>/search', methods=['GET', 'POST'])
+@login_required
+def admin_search(id):
+    if request.method=="POST":
+        search_by=request.form.get('search_by')
+        search_name=request.form.get('search_name').strip().lower()
+
+        if search_by=='professional':
+            result=[]
+            all_prof=Professional.query.all()
+            for prof in all_prof:
+                fname=prof.fname.lower()
+                lname=prof.lname.lower()
+                if search_name in fname or search_name in lname or search_name==fname or search_name==lname:
+                    user=User.query.filter_by(id=prof.user_id).first_or_404()
+                    result.append((user,prof))
+            return render_template("/Admin/search.html", admin=get_admin(id), actives=result, msg='professional')
+
+        elif search_by=='customer':
+            result=[]
+            all_cust=Customer.query.all()
+            for cust in all_cust:
+                fname=cust.fname.lower()
+                lname=cust.lname.lower()
+                if search_name in fname or search_name in lname or search_name==fname or search_name==lname:
+                    user=User.query.filter_by(id=cust.user_id).first_or_404()
+                    result.append((user,cust))
+            return render_template("/Admin/search.html", admin=get_admin(id), actives=result, msg='customer')
+        elif search_by=='service':
+            result=[]
+            all_srvs=Service.query.all()
+            for srvs in all_srvs:
+                name=srvs.name.lower()
+                if search_name in name or search_name==name:
+                    result.append(srvs)
+            return render_template("/Admin/search.html", admin=get_admin(id), actives=result, msg='service')
+
+    return render_template("/Admin/search.html", admin=get_admin(id), actives='')
 
 @HomeEase.route('/HomeEase/admin/<int:id>/profile')
 @login_required
@@ -467,11 +549,11 @@ def manage_users(id):
     for user in User.query.filter_by(active=0).all():
         if user.role.name=='professional':
             prof = Professional.query.filter_by(user_id=user.id).first_or_404()
-            userData={"id":user.id, "fname":prof.fname, "lname":prof.fname, "email":user.email, "user_type":user.role.name}
+            userData={"id":user.id, "fname":prof.fname, "lname":prof.lname, "email":user.email, "user_type":user.role.name}
             block_list.append(userData)
         elif user.role.name == 'customer':
             cust = Customer.query.filter_by(user_id=user.id).first_or_404()
-            userData={"id":user.id, "fname":cust.fname, "lname":cust.fname, "email":user.email, "user_type":user.role.name}
+            userData={"id":user.id, "fname":cust.fname, "lname":cust.lname, "email":user.email, "user_type":user.role.name}
             block_list.append(userData)
 
     return render_template("/Admin/manage_users.html", admin=get_admin(id), un_verified=un_verified_list, actives=active_list, blocks=block_list)
@@ -1050,7 +1132,7 @@ def submit_review(id, req_id):
         db.session.add(review)
 
         service_req.service_status = 'closed'
-        service_req.date_of_completion = datetime.datetime.now()
+        service_req.date_of_completion = datetime.now()
 
         # Calculating Review Rating Star.
         review_count = int(service.review_count) + 1
@@ -1112,7 +1194,7 @@ def customer_search(id):
 @HomeEase.route('/HomeEase/customer/<int:id>/summary')
 @login_required
 def customer_summary(id):
-    return render_template('/Customer/summary.html', customer=get_customer(id))
+    return render_template('/Customer/summary.html', customer=get_customer(id), me=[12, 19, 3, 5, 2, 3])
 
 @HomeEase.route('/HomeEase/customer/<int:id>/profile')
 @login_required
