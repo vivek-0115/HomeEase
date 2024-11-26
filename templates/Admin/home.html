@@ -56,7 +56,7 @@
         <hr>
         <br>
         <div class="row" id="information">
-          <div class="col">
+          <div class="col col-3">
             <div>
               <h5>Users</h5>
               <hr>
@@ -64,7 +64,7 @@
               <p>Blocked Users: {{infor['Users']['total']['block']}}</p>
             </div>
           </div>
-          <div class="col">
+          <div class="col col-3">
             <div>
               <h5>Professional</h5>
               <hr>
@@ -72,7 +72,7 @@
               <p>Blocked Professionals: {{infor['Users']['professional']['block']}}</p>
             </div>
           </div>
-          <div class="col">
+          <div class="col col-3">
             <div>
               <h5>Customer</h5>
               <hr>
@@ -80,11 +80,28 @@
               <p>Blocked Professionals: {{infor['Users']['customer']['block']}}</p>
             </div>
           </div>
-          <div class="col">
+          <div class="col col-3">
             <div>
               <h5>Services</h5>
               <hr>
               <p>Total Service: {{infor['Services']['total']}}</p>
+              <p>Total Requests: {{infor['Requests']['total']}}</p>
+            </div>
+          </div>
+          <div class="col col-3">
+            <div>
+              <h5>Service Requests</h5>
+              <hr>
+              <p>Total : {{infor['Requests']['total']}} <span> || </span> Requested : {{infor['Requests']['requested']}}</p>
+              <p>Accepted : {{infor['Requests']['accepted']}} <span> || </span> Closed : {{infor['Requests']['closed']}}</p>
+            </div>
+          </div>
+          <div class="col col-3">
+            <div>
+              <h5>Reviews</h5>
+              <hr>
+              <p>Total Reviews : {{infor['Reviews']['total']}}</p>
+              <p>Unremarked : {{infor['Reviews']['unremark']}}</p>
             </div>
           </div>
         </div>

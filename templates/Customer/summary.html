@@ -14,38 +14,85 @@
 
 {% block main_content %}
 
+<hr><br>
+
+<div class="row" id="information">
+  <div class="col col-3">
+    <div>
+      <h5>Service Requests</h5>
+      <hr>
+      <p>Total Requests: {{infor['Requests']['total']}}  <span>||</span> Requested : {{infor['Requests']['requested']}} </p>
+    </div>
+  </div>
+  <div class="col col-3">
+    <div>
+      <h5>Service Requests</h5>
+      <hr>
+      <p>Accepted : {{infor['Requests']['accepted']}} <span>||</span> Closed : {{infor['Requests']['closed']}} </p>
+    </div>
+  </div>
+  <div class="col col-3">
+    <div>
+      <h5>Reviews</h5>
+      <hr>
+      <p>Total : {{infor['Reviews']['total']}} </p>
+    </div>
+  </div>
+  <div class="col col-3">
+    <div>
+      <h5>Service</h5>
+      <hr>
+      <p>Available: {{infor['Service']['available']}} </p>
+    </div>
+  </div>
+</div>
+
+<hr>
+<br>
+
 <div>
     <canvas id="myChart"></canvas>
 </div>
+<hr>
 
-<div id="l">
-  {{[12, 19, 3, 5, 2, 3]}}
-</div>
+<div id="chart-data" style="display:none;">{{ infor | tojson }}</div>
 
+{% endblock %}
+{% block script %}
 <script>
-    const ctx = document.getElementById('myChart');
-    const dataDiv = document.getElementById('l');
-    const rawData = dataDiv.textContent.trim();
-    const dataArray = JSON.parse(rawData);
-  
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-          label: '# of Votes',
-          data: dataArray,
-          borderWidth: 1
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true
-          }
+  const ctx = document.getElementById('myChart');
+
+  const dataDiv = document.getElementById('chart-data');
+  const data = JSON.parse(dataDiv.textContent.trim());
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Total Requests', 'Requested', 'Accepted', 'Closed'],
+      datasets: [{
+        label: '#',
+        data: [
+          data['Requests']['total'],
+          data['Requests']['requested'],
+          data['Requests']['accepted'],
+          data['Requests']['closed'],
+        ],
+        backgroundColor: [
+            'rgb(255, 99, 132)',
+            'rgb(75, 192, 192)',
+            'rgb(255, 205, 86)',
+            'rgb(201, 203, 207)',
+            ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
         }
       }
-    });
-  </script>
-
+    }
+  });
+</script>
 {% endblock %}

@@ -239,15 +239,70 @@ th, td {
 
 #information{
     & .col div{
-        border: 2px solid #285088;
         padding: 10px;
         border-radius: 5px;
-        background-color: #022352;
-
+        margin-bottom: 10px;
         & h5{
             text-align: center;
         }
     }
+    & .col:nth-child(1) div{
+        background-color: rgba(255, 99, 132, 0.2);
+        border: 2px solid rgba(255, 99, 132, 1);
+        & h5{
+            color: rgba(255, 99, 132, 1);
+        }
+    }
+    & .col:nth-child(2) div{
+        background-color: rgba(54, 162, 235, 0.2);
+        border: 2px solid rgba(54, 162, 235, 1);
+        & h5{
+            color: rgba(54, 162, 235, 1);
+        }
+    }
+    & .col:nth-child(3) div{
+        background-color: rgba(255, 206, 86, 0.2);
+        border: 2px solid rgba(255, 206, 86, 1);
+        & h5{
+            color: rgba(255, 206, 86, 1);
+        }
+    }
+    & .col:nth-child(4) div{
+        background-color: rgba(75, 192, 192, 0.2);
+        border: 2px solid rgba(75, 192, 192, 1);
+        & h5{
+            color: rgba(75, 192, 192, 1);
+        }
+    }
+    & .col:nth-child(5) div{
+        background-color: rgba(153, 102, 255, 0.2);
+        border: 2px solid rgba(153, 102, 255, 1);
+        & h5,span{
+            color: rgba(153, 102, 255, 1);
+        }
+    }
+    & .col:nth-child(6) div{
+        background-color: rgba(75, 192, 192, 0.2);
+        border: 2px solid rgba(75, 192, 192, 1);
+        & h5{
+            color: rgba(75, 192, 192, 1);
+        }
+    }
+    & .col:nth-child(7) div{
+        background-color: rgba(255, 99, 132, 0.2);
+        border: 2px solid rgba(255, 99, 132, 1);
+        & h5{
+            color: rgba(255, 99, 132, 1);
+        }
+    }
+    & .col:nth-child(8) div{
+        background-color: rgba(54, 162, 235, 0.2);
+        border: 2px solid rgba(54, 162, 235, 1);
+        & h5{
+            color: rgba(54, 162, 235, 1);
+        }
+    }
+    
 }
 
 @media (max-width: 576px) { /* For small devices like phones */
