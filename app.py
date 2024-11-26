@@ -387,6 +387,8 @@ def admin_home(id):
     plumbing=Service.query.filter_by(category="plumbing").all()
     carpentry=Service.query.filter_by(category="carpentry").all()
     electrical=Service.query.filter_by(category="electrical").all()
+    all_req=ServiceRequest.query.all()
+    reviews=Review.query.all()
 
     infor={
         "Users":{
@@ -410,9 +412,18 @@ def admin_home(id):
             "cleaning":len(cleaning),
             "gardening":len(gardening),
             "plumbing":len(plumbing)
+        },
+        "Requests":{
+            "total":len(all_req),
+            "requested":len([req for req in all_req if req.service_status=='requested']),
+            "closed":len([req for req in all_req if req.service_status=='closed']),
+            "accepted":len([req for req in all_req if req.service_status=='accepted']),
+        },
+        "Reviews":{
+            "total":len(reviews),
+            "unremark":len([review for review in reviews if not review.remark])
         }
     }
-
     return render_template("/Admin/home.html", admin=get_admin(id), infor=infor)
 
 @HomeEase.route('/HomeEase/admin/<int:id>/search', methods=['GET', 'POST'])
@@ -954,8 +965,23 @@ def professional_summary(id):
 
     if not professional['is_verified']:
         return abort(403)
+    
+    
 
-    return render_template('/Professional/summary.html', professional=professional)
+    all_req=ServiceRequest.query.filter_by(professional_id=professional['prof_id']).all()
+
+    infor={
+        "Requests":{
+            "total":len(all_req),
+            "closed":len([req for req in all_req if req.service_status=='closed']),
+            "accepted":len([req for req in all_req if req.service_status=='accepted']),
+            "rejected":len(RejectedService.query.filter_by(professional_id=professional["prof_id"]).all())
+        }
+    }
+
+    print(infor)
+
+    return render_template('/Professional/summary.html', professional=professional, infor=infor)
 
 @HomeEase.route('/HomeEase/professioinal/<int:id>/profile')
 @login_required
@@ -1194,7 +1220,29 @@ def customer_search(id):
 @HomeEase.route('/HomeEase/customer/<int:id>/summary')
 @login_required
 def customer_summary(id):
-    return render_template('/Customer/summary.html', customer=get_customer(id), me=[12, 19, 3, 5, 2, 3])
+    cust=Customer.query.filter_by(user_id=id).first_or_404()
+    requests=ServiceRequest.query.filter_by(customer_id=cust.id).all()
+    services=Service.query.all()
+    reviews=Review.query.filter_by(customer_id=cust.id).all()
+
+    infor={
+        "Requests":{
+            "total":len(requests),
+            "requested":len([req for req in requests if req.service_status=='requested']),
+            "closed":len([req for req in requests if req.service_status=='closed']),
+            "accepted":len([req for req in requests if req.service_status=='accepted']),
+        },
+        "Reviews":{
+            "total":len(reviews),
+        },
+        "Service":{
+            "available":len(services)
+        }
+    }
+
+    print(infor)
+
+    return render_template('/Customer/summary.html', customer=get_customer(id), infor=infor)
 
 @HomeEase.route('/HomeEase/customer/<int:id>/profile')
 @login_required
