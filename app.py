@@ -1010,6 +1010,7 @@ def professional_change_profile(id):
     return abort(405)
 
 @HomeEase.route('/HomeEase/professional/<int:id>/change_password', methods=['GET', 'POST'])
+@login_required
 def professional_change_password(id):
     if request.method=="POST":
         old_password = request.form.get('old_password')
@@ -1028,7 +1029,8 @@ def professional_change_password(id):
         return redirect(url_for('professional_profile',id=id))
     return abort(405)
 
-@HomeEase.route('/HomeEase/customer/<int:id>/update_information', methods=['GET', 'POST'])
+@HomeEase.route('/HomeEase/professional/<int:id>/update_information', methods=['GET', 'POST'])
+@login_required
 def professional_update_information(id):
     if request.method == "POST":
         fname = request.form.get('fname')
@@ -1282,6 +1284,7 @@ def change_profile(id):
     return abort(405)
 
 @HomeEase.route('/HomeEase/customer/<int:id>/change_password', methods=['GET', 'POST'])
+@login_required
 def change_password(id):
     if request.method=="POST":
         old_password = request.form.get('old_password')
@@ -1301,6 +1304,7 @@ def change_password(id):
     return abort(405)
 
 @HomeEase.route('/HomeEase/customer/<int:id>/update_information', methods=['GET', 'POST'])
+@login_required
 def update_information(id):
     if request.method == "POST":
         fname = request.form.get('fname')
@@ -1330,8 +1334,7 @@ def update_information(id):
 
         flash('Information Updated','success')
         return redirect(url_for('customer',id=id))
-    else:
-        abort(405)
+    return abort(405)
 
 #==================Customers Control End===========================#
 
