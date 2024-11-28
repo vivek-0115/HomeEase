@@ -183,98 +183,105 @@
         }
       });
 
- 
+
       new Chart(service, {
         type: 'doughnut',
         data: {
           labels: ['Electical', 'Carpentry', 'Plumbing', 'Cleaning', 'Gardening'],
           datasets: [{
-            label: 'My First Dataset', 
+            label: 'My First Dataset',
             data: [
-              data['Services']['electrical']/data['Services']['total'],
-              data['Services']['electrical']/data['Services']['total'],
-              data['Services']['electrical']/data['Services']['total'],
-              data['Services']['electrical']/data['Services']['total'],
-              data['Services']['electrical']/data['Services']['total'],
-            ], 
-            backgroundColor: [
-            'rgb(255, 99, 132)',
-      'rgb(75, 192, 192)',
-      'rgb(255, 205, 86)',
-      'rgb(201, 203, 207)',
-      'rgb(54, 162, 235)'
+              data['Services']['electrical'] / data['Services']['total'],
+              data['Services']['electrical'] / data['Services']['total'],
+              data['Services']['electrical'] / data['Services']['total'],
+              data['Services']['electrical'] / data['Services']['total'],
+              data['Services']['electrical'] / data['Services']['total'],
             ],
-            hoverOffset: 4 
+            backgroundColor: [
+              'rgb(255, 99, 132)',
+              'rgb(75, 192, 192)',
+              'rgb(255, 205, 86)',
+              'rgb(201, 203, 207)',
+              'rgb(54, 162, 235)'
+            ],
+            hoverOffset: 4
           }]
         },
         options: {
           responsive: true,
           plugins: {
             legend: {
-              position: 'top', 
+              position: 'top',
             },
             title: {
-                    display: true,
-                    text: 'Service distribution by Category'
-                }
+              display: true,
+              text: 'Service distribution by Category'
+            }
           }
         }
       });
 
       new Chart(info, {
-                type: 'polarArea',
-                data: {
-                  labels: [
-    'Total User',
-    'Blocked User',
-    'Total Customer',
-    'Blocked Customer',
-    'Total Professional',
-    'Blocked Professional'
-  ],
-                    datasets: [{
-                        label: 'Dataset 1', // Chart legend label
-                        data: [15, 28, 42, 7, 34, 19], // Data values
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)', // Red
-                            'rgba(54, 162, 235, 0.2)', // Blue
-                            'rgba(255, 206, 86, 0.2)', // Yellow
-                            'rgba(75, 192, 192, 0.2)', // Green
-                            'rgba(153, 102, 255, 0.2)', // Purple
-                            'rgba(255, 159, 64, 0.2)'  // Orange
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)', // Red
-                            'rgba(54, 162, 235, 1)', // Blue
-                            'rgba(255, 206, 86, 1)', // Yellow
-                            'rgba(75, 192, 192, 1)', // Green
-                            'rgba(153, 102, 255, 1)', // Purple
-                            'rgba(255, 159, 64, 1)'  // Orange
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top', // Legend position
-                        },
-                    },
-                    scales: {
-                r: { // Radial scale configuration
-                    grid: {
-                        display: false, // Hide radial grid lines
-                    },
-                    ticks: {
-                        display: false, // Hide radial ticks
-                    }
-                }
+        type: 'polarArea',
+        data: {
+          labels: [
+            'Total User',
+            'Blocked User',
+            'Total Customer',
+            'Blocked Customer',
+            'Total Professional',
+            'Blocked Professional'
+          ],
+          datasets: [{
+            label: '#', // Chart legend label
+            data: [
+              data['Users']['total']['user'],
+              data['Users']['total']['block'],
+              data['Users']['customer']['user'],
+              data['Users']['customer']['block'],
+              data['Users']['professional']['user'],
+              data['Users']['professional']['block']
+            ], // Data values
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.2)', // Red
+              'rgba(54, 162, 235, 0.2)', // Blue
+              'rgba(255, 206, 86, 0.2)', // Yellow
+              'rgba(75, 192, 192, 0.2)', // Green
+              'rgba(153, 102, 255, 0.2)', // Purple
+              'rgba(255, 159, 64, 0.2)'  // Orange
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)', // Red
+              'rgba(54, 162, 235, 1)', // Blue
+              'rgba(255, 206, 86, 1)', // Yellow
+              'rgba(75, 192, 192, 1)', // Green
+              'rgba(153, 102, 255, 1)', // Purple
+              'rgba(255, 159, 64, 1)'  // Orange
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top', // Legend position
+            },
+          },
+          scales: {
+            r: { // Radial scale configuration
+              grid: {
+                display: false, // Hide radial grid lines
+              },
+              ticks: {
+                display: false, // Hide radial ticks
+              }
             }
-                }
-            });
-            
-      
+          }
+        }
+      });
+
+
     </script>
 </body>
 </html>
