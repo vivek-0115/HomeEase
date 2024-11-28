@@ -40,7 +40,7 @@
 {% endblock %}
 
 {% block change_password %}
-<form action="{{url_for('change_password',id=data.id)}}" method="post">
+<form action="{{url_for('change_password',id=data['id'])}}" method="post">
     <h6>Change Your Password</h6>
     <div class="flash-box">
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -51,8 +51,8 @@
         {% endif %}
         {% endwith %}
     </div>
-    <input type="password" placeholder="Password (4-8)" name="old_password" maxlength="8" minlength="4" required>
-    <input type="password" placeholder="Password (4-8)" name="new_password" maxlength="8" minlength="4" required>
+    <input type="password" placeholder="Old Password (4-8)" name="old_password" maxlength="8" minlength="4" required>
+    <input type="password" placeholder="New Password (4-8)" name="new_password" maxlength="8" minlength="4" required>
     <div> <input type="submit" value="change"></div>
 </form>
 {% endblock %}
@@ -97,7 +97,7 @@
 {% endblock %}
 
 {% block update_information %}
-<form action="{{url_for('update_information',id=data.id)}}" method="post">
+<form action="{{url_for('update_information',id=data['id'])}}" method="post">
     <h2>Update Information</h2>
     <div class="flash-box">
         {% with messages = get_flashed_messages(with_categories=true) %}
